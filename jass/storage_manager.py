@@ -59,15 +59,17 @@ class StorageManager:
         Creates a new document.
         This function only validates the presence of the required fields.
 
-        @Preconditions (Otherwise exception is thrown):
+        :preconditions (Otherwise exception is thrown):
             * isConnected must be true,
             * jsonDoc must exist and be a valid JSON object,
 
         :param jsonDoc: Contents of the document as string
             Here are the elements required by the document:
-            {
-                \@context: context describing the format of the document
-            }
+            ::
+            
+                {
+                    @context: context describing the format of the document
+                }
 
             If the document contains the field _id, the _id field will be
             deleted and another _id field will be generated instead. The
@@ -107,19 +109,21 @@ class StorageManager:
         Returns a document
         This function only validates the presence of the required fields.
 
-        @Preconditions (Otherwise exception is thrown):
+        :Preconditions (Otherwise exception is thrown):
             * isConnected must be true,
 
         :param documentId: Document ID
+        
         :return : If the document is found returns a simplejson object of the
                   document, otherwise returns None
 
-            Document content returned (mandatory).
-            Other user fields may be present:
-            {
-                _id: Document id as a string
-                \@context: context describing the format of the document
-            }
+            Document content returned (mandatory). Other user fields may be present:
+            ::
+            
+                {
+                    _id: Document id as a string
+                    @context: context describing the format of the document
+                }
         """
         if not (collection):
             collection = self.mongoCollection
@@ -146,22 +150,21 @@ class StorageManager:
         Updates an existing document, by replacing it with new contents.
         This function only validates the presence of the required fields.
 
-        @Preconditions (Otherwise exception is thrown):
+        :Preconditions (Otherwise exception is thrown):
             * isConnected must be true,
             * required fields must be present
 
-        :param jsonDoc: Document as a JSON document. The document needs to
-                        contain a valid id.
+        :param jsonDoc: Document as a JSON document. The document needs to contain a valid id.
 
-        :return : If the document to be updated is found, returns the id of the
-                  document. If it can not be found, raises an exception.
+        :return : If the document to be updated is found, returns the id of the document. If it can not be found, raises an exception.
 
-                  Document content returned (mandatory).
-                  Other user fields may be present:
-                  {
-                      _id: Document id as a string
-                      \@context: Context describing the format of the document
-                  }
+                  Document content returned (mandatory). Other user fields may be present:
+                  ::
+                  
+                      {
+                          _id: Document id as a string
+                          @context: Context describing the format of the document
+                      }
         """
 
         if not (collection):
@@ -206,6 +209,7 @@ class StorageManager:
         Deletes a document specified by ID.
 
         :param strDocId: Document ID as string. Should be unique.
+        
         :returns: 0 if no elements were deleted, 1 if one was deleted.
         """
 
@@ -221,13 +225,11 @@ class StorageManager:
         """
         Search a collection for documents.
 
-        @param: documentIds: List of document IDs for which we should search
-                             annotations.
-        @param: A queryToDetermine how to select annotations:
-            see http://docs.mongodb.org/manual/reference/operator/query/ for
-            options
+        :@param documentIds: List of document IDs for which we should search annotations.
+        
+        :@param A queryToDetermine how to select annotations: see http://docs.mongodb.org/manual/reference/operator/query/ for options
 
-        @return: the number of deleted documents
+        :@return the number of deleted documents
         """
 
         if not (collection):
@@ -253,12 +255,12 @@ class StorageManager:
         """
         Delete multiple annotations.
 
-        @param: documentIds: List of document IDs which should be affected.
-        @param: a queryToDetermine how to select annotations:
-            see http://docs.mongodb.org/manual/reference/operator/query/ for
+        :@param documentIds: List of document IDs which should be affected.
+        
+        :@param a queryToDetermine how to select annotations: see http://docs.mongodb.org/manual/reference/operator/query/ for
             options
 
-        @return: The number of deleted documents
+        :@return The number of deleted documents
         """
 
         if not (collection):

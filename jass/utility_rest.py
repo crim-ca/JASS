@@ -58,9 +58,10 @@ def get_canarie_api_response(service_name ,template_path,canarie_api_request):
     service_route.
 
     :param:
-        service_route: Route name of the service coming from the URL e.g.:
+        :service_route: Route name of the service coming from the URL e.g.:
                        ['diarisation', 'STT', etc.]
-        canarie_api_request: The request specified in the URL
+                       
+        :canarie_api_request: The request specified in the URL
     :returns: A valid html response
     """
 
@@ -89,21 +90,23 @@ def get_server_restart_time():
     Obtain the server status provided by Apache if properly configured.
     The configuration file must contain the following section:
 
-    # Enable the module mod_status
-    # See : http://httpd.apache.org/docs/2.2/mod/mod_status.html
-    <Location /server-status>
-        SetHandler server-status
-        Order deny,allow
-        #Deny access for everyone outside
-        Deny from all
-        #Allow access from IP 10* (private address inside local network)
-        Allow from 10
-        #Allow access from 132.217* (public IP range own by the CRIM)
-        Allow from 132.217
-    </Location>
-
-    # Keep track of extended status information for each request
-    ExtendedStatus On
+    ::
+    
+        # Enable the module mod_status
+        # See : http://httpd.apache.org/docs/2.2/mod/mod_status.html
+        <Location /server-status>
+            SetHandler server-status
+            Order deny,allow
+            #Deny access for everyone outside
+            Deny from all
+            #Allow access from IP 10* (private address inside local network)
+            Allow from 10
+            #Allow access from 132.217* (public IP range own by the CRIM)
+            Allow from 132.217
+        </Location>
+    
+        # Keep track of extended status information for each request
+        ExtendedStatus On
     """
 
     conn = httplib.HTTPConnection(settings.GetConfigValue('Server', 'Name'))

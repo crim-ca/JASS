@@ -30,22 +30,26 @@ class AnnotationManager(StorageManager):
 
     # Describes the format of the elements to input
     """
-    {data:[{annotation1}...{annotationN}]}
-        Where: annotation1 is the same format as if you would only get one
-               annotation
+    ::
+    
+        {data:[{annotation1}...{annotationN}]}
+            Where: annotation1 is the same format as if you would only get one
+                   annotation
     """
     BASIC_BATCH_FORMAT = 0
 
     """
-    {
-        common: {
-
+    ::
+    
+        {
+            common: {
+        
+            }
+            data : [{annotation1, ...}]
         }
-        data : [{annotation1, ...}]
-    }
-
-    common : Elements contained in common will be copied for each annotation
-    annotation1: Annotation specific information
+    
+    **common** : Elements contained in common will be copied for each annotation
+    **annotation1** : Annotation specific information
     """
     COMPACT_BATCH_FORMAT = 1
 
@@ -61,8 +65,7 @@ class AnnotationManager(StorageManager):
 
     def createAnnotation(self, jsonDoc, strDocId, storageType=1):
         """
-        This function creates an annotation.
-            Currently this only works for annotations in storageType = 1
+        This function creates an annotation. Currently this only works for annotations in storageType = 1
 
         @Preconditions:
             documentId : A valid storage id. (We don't check that it exists
@@ -134,22 +137,21 @@ class AnnotationManager(StorageManager):
         error if there is even a single invalid annotation.
 
         A valid annotation after processing has the following attributes:
-            doc_id: Describes the id of the document containing the
+            :doc_id: Describes the id of the document containing the
                     annotation. Equals to strDocId.
-            @context: A field linking the context of the document.
+            :@context: A field linking the context of the document.
 
             This field will be automatically created.
             _id:  A unique id identifying the annotation,
 
 
-        @param: jsonBatch : JSON of the message. See batch format on how this
+        :@param jsonBatch : JSON of the message. See batch format on how this
                             field is supposed to be structured.
 
-        @param: strDocId : Id of the document containing the annotation
-        @param: storageType : Describes how to store the elements. (Currently
-                              can not be changed) Supports: 1,2
+        :@param strDocId : Id of the document containing the annotation
+        :@param storageType : Describes how to store the elements. (Currently can not be changed) Supports: 1,2
 
-        @param: batchFormat : Describes the format of the elements to input.
+        :@param batchFormat : Describes the format of the elements to input.
                               Supports: 0,1
 
 
@@ -287,20 +289,17 @@ class AnnotationManager(StorageManager):
                        batchFormat=0,
                        storageType=0):
         """
-        Delete multiple annotations.
+        Returns annotations respecting serach criterias
 
-        @param: documentIds: List of documents containing the annotations.
-        @param jsonSelect: Additional query parameters, which can restrict the
-                           search:
-                           See:
-                           http://docs.mongodb.org/manual/reference/operator/query/
-                           for options
-        @param: storageType : Describe which annotation storage to search.
-                              Supports: 0,1,2
-        @param batchFormat: Describes how the elements would be returned
-                            Supports : 0
+        :@param documentIds: List of documents containing the annotations.
+        
+        :@param jsonSelect: Additional query parameters, which can restrict the search: See: http://docs.mongodb.org/manual/reference/operator/query/ for options
+        
+        :@param storageType: Describe which annotation storage to search. Supports: 0,1,2
+        
+        :@param batchFormat: Describes how the elements would be returned Supports : 0
 
-        @return: Documents found in the format described by batch format.
+        :@return: Documents found. Return format is described by batchFormat.
         """
         if not (self.__validateDocumentIds(documentIds)):
             return {"data": []}
@@ -338,15 +337,15 @@ class AnnotationManager(StorageManager):
         """
         Delete multiple annotations.
 
-        @param: documentIds: List of documents containing the annotations.
-        @param jsonSelect: Additional query parameters, which can restrict the
-                           search: see
-                           http://docs.mongodb.org/manual/reference/operator/query/
-                           for options
-        @param: storageType : Describe which annotation storage to search.
-                              Supports: 1,2
-        @return: Number of deleted annotations in case storageType = 1.
-                 Number of batches deleted in case of storageType = 2.
+        :@param documentIds: List of documents containing the annotations.
+        
+        :@param jsonSelect: Additional query parameters, which can restrict the search: See: http://docs.mongodb.org/manual/reference/operator/query/ for options
+        
+        :@param storageType: Describe which annotation storage to search. Supports: 0,1,2
+        
+        :@param batchFormat: Describes how the elements would be returned Supports : 0
+
+        :@return: Number of documents deleted.
         """
         if not (self.__validateDocumentIds(documentIds)):
             return 0
@@ -407,11 +406,11 @@ class AnnotationManager(StorageManager):
     # ~ Private
     def __validateDocumentIds(self, documentIds):
         """
-        @param: documentIds: List of documents containing the annotations.
+        :@param documentIds: List of documents containing the annotations.
                              Raises an exception if documentIds contains an
                              invalid Id
                              (Invalid Format, not whenever it exists or not).
-        @return 0: If documentIds is empty.
+        :@return: 0 if documentIds is empty.
         """
         if not (type(documentIds) is list):
             return 0

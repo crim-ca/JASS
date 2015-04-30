@@ -2,17 +2,15 @@
 # coding:utf-8
 
 """
-This module defines a REST API for the annotation storage service as defined by
-the CANARIE API specification.
+This module defines a REST API for the annotation storage service as defined by the CANARIE API specification.
 
 ===========
 ANNOTATIONS
 ===========
-There are several common concepts shared used in annotations, which we should
-describe here
+
+There are several common concepts shared used in annotations, which we should describe here
     |        **reservedFields**:
-    |            fields: "_id" is reserved and will be ignored if passed either inside 
-                        annotation or document.
+    |            fields: "_id" is reserved and will be ignored if passed either inside annotation or document.
     |        **storageType**: Describe with which annotation storage we are
     |                         interacting. Multiple storages are required
     |                         Depending on the access of annotations.
@@ -350,17 +348,19 @@ def createDocument():
     :route: **/document**
 
     :POST creates a new document:
-        :Request:
-            :preconditions:
-            |    Here are the minimum required elements by the document.
-            |    {
-            |        \@context: context describing the format of the document
-            |    }
-            |
-            |    All the other parameters will be saved as is.
-            |    Erases "_id", "id" fields if they exists.
-        :Response:
-            |    Same as in, plus creates a field "id" to identify the document
+        :Request: 
+        
+            ::
+            
+                Preconditions: Here are the minimum required elements by the document.
+                {
+                    @context: context describing the format of the document
+                }
+            
+            All the other parameters will be saved as is.
+            Erases "_id", "id" fields if they exists.
+        :Response: Same as in, plus creates a field "id" to identify the document
+                
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
@@ -409,42 +409,48 @@ def document(document_id):
 
     :GET returns a document:
         :Response  JSON:
-            |    Here are minimum document contents:
-            |    {
-            |      id:                    Id of the document = document_id
-            |      @context:              Complex object containing JSON_LD
-            |                             info.
-            |    }
-            |    Other custom fields which were created would be returned too.
+        
+            Here are minimum document contents:
+            ::
+                
+                {
+                  id:                    Id of the document = document_id
+                  @context:              Complex object containing JSON_LD
+                                         info.
+                }
+
+            Other custom fields which were created would be returned too.
+                
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
     :PUT updates a document by replacing whole document contents:
         :Request:
-            |    The document must exists and contains the following contents
-            |    at minimum::
-            |    {
-            |        id:                    Id of the document = document_id
-            |        @context:              Complex object containing JSON_LD
-            |                               info.
-            |    }
-            |
-            |    Other custom fields which were created would be saved too.
-            |    Erases "_id" field.
+        
+            The document must exists and contains the following contents at minimum:
+            ::
+            
+                 {
+                     id:                    Id of the document = document_id
+                     @context:              Complex object containing JSON_LD
+                                            info.
+                 }
+            
+            Other custom fields which were created would be saved too.
+            Erases "_id" field.
+            
         :Response:
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
     :DELETE deletes the document. If the document not found do nothing.:
-        :Response JSON:
-            |   {}
+        :Response JSON: {}
+                   
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
-
-    Note should we delete all annotations for this document (and schemas?)
     """
     man = DocumentManager()
     try:
@@ -575,68 +581,89 @@ def documentAnnotationS(document_id):
         :Request:
  
             :preconditions:
-            |   All must be valid annotations.
-            |   If one annotation fails, it will return an error message and
-            |   fail all create. 
+            
+               All must be valid annotations.
+               If one annotation fails, it will return an error message and
+               fail all create. 
             :params supported:
-            |   batchFormat = 0,1
-            |   storageType = 1,2
+            
+                |   batchFormat = 0,1
+                |   storageType = 1,2
             :params default:
-            |   batchFormat = 1
-            |   storageType = 1
+            
+                |   batchFormat = 1
+                |   storageType = 1
         :Response json:
+        
             |    returns {"nInserted":nbAnnotationsInserted}
+            
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
     :PUT Updates annotations related for the document.: 
-    :Request:
+        :Request:
+    
             When we update we replace old contents with new ones. jsonSelect 
+            
             :params supported:
-            |    jsonSelect (only contains contents in the "common" fields for storageType = 2.)
-            |    storageType = 2
+                |    jsonSelect (only contains contents in the "common" fields for storageType = 2.)
+                |    storageType = 2
+            
             :params default:
-            |    storageType = 2 
-            |    jsonSelect = {}
+            
+                |    storageType = 2 
+                |    jsonSelect = {}
         :Response json:
             |    Returns number of annotations deleted
             |    {"nDeleted":nbAnnotationsDeleted}
+            
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
     :DELETE Deletes annotations related for the document.:
         :Request:
+        
             :params supported:
-            |    jsonSelect
-            |    storageType = 1,2
+            
+                |    jsonSelect
+                |    storageType = 1,2
             :params default:
-            |    storageType = 1
-            |    jsonSelect = {}
+            
+                |    storageType = 1
+                |    jsonSelect = {}
         :Response json:
             |    Returns number of annotations deleted
             |    {"nDeleted":nbAnnotationsDeleted}
+            
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
     :GET Returns annotations for the current document.:
         :Request:
+        
             :params supported:
-            |    jsonSelect
-            |    storageType = 0,1,2
-            |    batchFormat = 0
+            
+                |    jsonSelect
+                |    storageType = 0,1,2
+                |    batchFormat = 0
+                
             :params default:
-            |    batchFormat = 0
-            |    storageType = 0
-            |    jsonSelect = {}
+                |    batchFormat = 0
+                |    storageType = 0
+                |    jsonSelect = {}
         :Response json:
+        
             An array of annotations check batch format for how they will be
             formatted.
+            
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
+
+
     """
     man = AnnotationManager()
 
@@ -734,34 +761,38 @@ def documentAnnotationS(document_id):
 def createDocumentAnnotation(document_id):
     """
     :route: **/document/<document_id>/annotation**
-
-    Creates an annotation
-    :param document_id: The id of the document for which we want to access the
-                        annotation
+    
+    :param document_id: The id of the document for which we want to access the annotation
 
     :POST Creates an annotation.:
         :Request:
             :preconditions:
-            |    Here are minimum annotations contents:
-            |    {
-            |      @context: Complex object containing JSON_LD info.
-            |    }
-            |    Other custom fields which were created would be returned too.
-            |
-            | The annotations using this method is created in HumanStorage.
+            
+                Here are minimum annotations contents:
+                ::
+                
+                    {
+                      @context: Complex object containing JSON_LD info.
+                    }
+                    
+                Other custom fields which were created would be returned too.
+            
+            The annotation using this method is created in HumanStorage.
         :Response JSON:
-            | Here are minimum annotations contents which will be after
-            | creation:
-            | {
-            |    doc_id: to describe the id of the document containing the
-            |            annotation. Equals to strDocId.
-            |    @context: a field linking the context of the document.
-            |    id:  a unique id identifying the annotation.
-            | }
+        
+            Here are minimum annotations contents which will be after creation:
+            ::
+            
+                 {
+                    doc_id: to describe the id of the document containing the
+                            annotation. Equals to strDocId.
+                    @context: a field linking the context of the document.
+                    id:  a unique id identifying the annotation.
+                 }
+                 
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
-
     """
     man = AnnotationManager()
     hac = settings.GetConfigValue("ServiceStockageAnnotations",
@@ -797,22 +828,28 @@ def documentAnnotation(document_id, annotation_id):
     :GET Returns an annotation:
         :Request:
              :precondtions:
-             |    Can only get annotations from HumanStorage.
+             
+                 Can only get annotations from HumanStorage.
+                 
         :Response json:
-            |Here are minimum annotations contents which will be after
-            |creation:
-            |{
-            |    doc_id: to describe the id of the document containing the
-            |            annotation. Equals to strDocId.
-            |    @context: a field linking the context of the document.
-            |    id:  a unique id identifying the annotation.
-            |}
+            
+            Here are minimum annotations contents which will be after
+            creation:
+            ::
+            
+                {
+                    doc_id: to describe the id of the document containing the
+                            annotation. Equals to strDocId.
+                    @context: a field linking the context of the document.
+                    id:  a unique id identifying the annotation.
+                }
 
-    :PUT Updates an annotation, by changing the content of the old annotation
-    with the new one.:
+    :PUT Updates an annotation:
+        Updates are made by changing the content of the old annotation with the new one
+        
         :Request:
             :precondtions:
-            |    Can only get annotations from HumanStorage.
+                Can only get annotations from HumanStorage.
         :Response:
             :http status code:
                 |    OK: 200
@@ -821,7 +858,8 @@ def documentAnnotation(document_id, annotation_id):
     :DELETE deletes an annotation.:
         :Request:
              :precondtions:
-             |    Can only get annotations from HumanStorage.
+                 Can only get annotations from HumanStorage.
+                 
         :Response:
             :http status code:
                 |    OK: 204
