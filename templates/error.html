@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+    <h2>{{ Error }}</h2>
+    {% if Details is defined %}
+        <div class=error>
+            {{ Details }}
+        </div>
+    {% else %}
+    {% endif %}
+	<div class=error>
+	
+	</div>
+{% endblock %}

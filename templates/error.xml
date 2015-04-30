@@ -1,0 +1,8 @@
+<CanGeoResponse>
+    <RestException>
+        <Status>{{ Status }}</Status>
+        <Message>{{ Message }}</Message>
+        <Code>{{ Code }}</Code>
+        <MoreInfo>{{ More_info }}</MoreInfo>
+    </RestException>
+</CanGeoResponse>
