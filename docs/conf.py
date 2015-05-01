@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+import sys
+from mock import Mock as MagicMock
+
+class Mock(MagicMock):
+    __all__ = []
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ["flask","gridfs","sqlite3","pymongo","bson.errors","simplejson","werkzeug.exceptions","pytz","bson.objectid"]
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+# -*- coding: utf-8 -*-
 #
 # Annotation Storage documentation build configuration file, created by
 # sphinx-quickstart on Thu Jun  5 14:22:07 2014.

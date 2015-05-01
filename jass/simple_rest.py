@@ -928,5 +928,6 @@ if __name__ == "__main__":
     settings.Settings.Instance().LoadConfig(OPTS.config_path) 
     APP.run(port=OPTS.port, debug=OPTS.debug,host=OPTS.host)
 else:
-    APP.wsgi_app = ReverseProxied(APP.wsgi_app)
-    settings.Settings.Instance().LoadConfig(os.environ['JASS_CONFIG_PATH'])
+    if os.environ.get('JASS_CONFIG_PATH') != None:
+        APP.wsgi_app = ReverseProxied(APP.wsgi_app)
+        settings.Settings.Instance().LoadConfig(os.environ['JASS_CONFIG_PATH'])

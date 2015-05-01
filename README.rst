@@ -2,29 +2,7 @@
 NEP-143-1 JASS (JSON-LD Annotation Storage Service)
 ===================================================    
 
-Creates a new document.
-        This function only validates the presence of the required fields.
 
-        :preconditions (Otherwise exception is thrown):
-            * isConnected must be true,
-            * jsonDoc must exist and be a valid JSON object,
-
-        :param jsonDoc: Contents of the document as string
-            Here are the elements required by the document:
-            ::
-            
-	            {
-	                @context: context describing the format of the document
-	            }
-
-            If the document contains the field _id, the _id field will be
-            deleted and another _id field will be generated instead. The
-            generated _id will be required to access the document.
-
-         :param collection: Enables you to override the default collection if
-                            needed
-
-         :return _id: The ID of the created document
 
 The purpose of this application is to propose a rest API to store and manipulate very large amounts of
 JSON_LD (json-ld.org) compliant annotations. Annotation are stored in a Mongo DB backend. 
