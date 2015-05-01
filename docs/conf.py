@@ -1,12 +1,9 @@
-import sys
-from mock import Mock as MagicMock
+# -*- coding: utf-8 -*-
+import mock
 
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-            return Mock()
-MOCK_MODULES = ["unittest","random","datetime","bson","flask","re","collections","werkzeug","gridfs","sqlite3","pymongo","simplejson","optparse","ConfigParser","httplib","logging","traceback","pytz","os"]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+MOCK_MODULES = ["unittest","random","datetime","bson","flask","re","collections","werkzeug","gridfs","sqlite3","pymongo","simplejson","optparse","ConfigParser","httplib","logging","traceback","pytz"]
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 # -*- coding: utf-8 -*-
 #
 # Annotation Storage documentation build configuration file, created by
