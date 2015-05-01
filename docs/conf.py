@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-import mock
-
-MOCK_MODULES = ["unittest","random","datetime","bson","flask","re","collections","werkzeug","gridfs","sqlite3","pymongo","simplejson","optparse","ConfigParser","httplib","logging","traceback","pytz"]
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
-# -*- coding: utf-8 -*-
 #
 # Annotation Storage documentation build configuration file, created by
 # sphinx-quickstart on Thu Jun  5 14:22:07 2014.
