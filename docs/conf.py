@@ -8,7 +8,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         return Mock()
 
-MOCK_MODULES = ["flask","gridfs","sqlite3","bson","pymongo","bson.errors","simplejson","werkzeug.exceptions","pytz","bson.objectid"]
+MOCK_MODULES = ["bson","flask","werkzeug","gridfs","sqlite3","pymongo","bson.errors","simplejson","werkzeug.exceptions","pytz","bson.objectid"]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # -*- coding: utf-8 -*-
 #
