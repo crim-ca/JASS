@@ -2,10 +2,9 @@
 NEP-143-1 JASS (JSON-LD Annotation Storage Service)
 ===================================================    
 
-
-
 The purpose of this application is to propose a rest API to store and manipulate very large amounts of
-JSON_LD (json-ld.org) compliant annotations. Annotation are stored in a Mongo DB backend. 
+JSON_LD (json-ld.org) compliant annotations. Annotation are stored in a Mongo DB backend.
+ 
 
 ------------
 INSTALLATION
@@ -68,6 +67,8 @@ BASIC API USAGE
 
 | The procedure is to create a document, then add/delete annotations associated with the document
 | Using curl http://curl.haxx.se/docs/ to call the api.
+| For more information about specific commands see developer documentation at :
+| http://jass.readthedocs.org/en/latest/jass.html#module-jass.simple_rest
 
 ---------
 DOCUMENTS
