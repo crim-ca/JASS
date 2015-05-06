@@ -21,7 +21,14 @@ For more info : http://docs.mongodb.org/manual/tutorial/install-mongodb-on-red-h
 
 .. code-block:: bash
 
-	sudo vi /etc/yum.repos.d/mongodb.repo
+	sudo vi /etc/yum.repos.d/mongodb-org-2.6.repo
+	# add this
+	[mongodb-org-2.6]
+	name=MongoDB 2.6 Repository
+	baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+	gpgcheck=0
+	enabled=1
+	
 	sudo yum install mongodb-org
 
 Start mongo service
@@ -39,7 +46,7 @@ In a shell
 
 .. code-block:: bash
 
-	export ANNO_STO_HOME=/usr/local/Service_Storage_Annotations_1_1_0
+	export ANNO_STO_HOME=/opt/Service_Storage_Annotations_1_1_0
 	cd $ANNO_STO_HOME
 
 Install requirements
@@ -91,8 +98,8 @@ Change **supervisor.conf**, to point to local files
 
 ::
 
-  directory=path_to_install_directory
-  environment=JASS_CONFIG_PATH=path_to_install_directory/configs/dev/config.ini
+  directory=/opt/Service_Storage_Annotations_1_1_0
+  environment=JASS_CONFIG_PATH=/opt/Service_Storage_Annotations_1_1_0/configs/dev/config.ini
 
 Start supervisor
 
