@@ -5,6 +5,11 @@ NEP-143-1 JASS (JSON-LD Annotation Storage Service)
 The purpose of this application is to propose a rest API to store and manipulate very large amounts of
 JSON_LD (json-ld.org) compliant annotations. Annotation are stored in a Mongo DB backend.
  
+-------
+LICENSE
+-------
+
+see https://github.com/crim-ca/JASS/tree/master/license.rst
 
 ------------
 INSTALLATION
