@@ -9,7 +9,7 @@ JSON_LD (json-ld.org) compliant annotations. Annotation are stored in a Mongo DB
 LICENSE
 -------
 
-see https://github.com/crim-ca/JASS/tree/master/LICENSE.rst
+see https://github.com/crim-ca/JASS/tree/master/THIRD_PARTY_LICENSES.rst
 
 ------------
 INSTALLATION
