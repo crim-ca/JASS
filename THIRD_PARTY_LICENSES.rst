@@ -1,17 +1,6 @@
 The license for this application can be found under: 
 https://github.com/crim-ca/JASS/tree/master/LICENSE
 
-#############
-Licenses used
-#############
-
-:BSD: http://en.wikipedia.org/wiki/BSD_licenses
-:Python Software Foundation License: http://opensource.org/licenses/Python-2.0
-:Apache v2: http://www.apache.org/licenses/LICENSE-2.0.html
-:MIT: http://opensource.org/licenses/MIT
-
-For licenses requiring files see in : https://github.com/crim-ca/JASS/tree/master/third-party-licenses
-
 ###################################
 The license for python dependencies
 ###################################
@@ -37,8 +26,3 @@ For applications
 :MongoDb: GNU AGPL v3.0. https://www.mongodb.org/about/licensing/, which only impacts the modification of MongoDb. The usage is through drivers (like pymongo) which are licensed uner Apache v2.0, thus as they say on their web site : "we promise that your client application which uses the database is a separate work".
 
 :supervisor: https://github.com/Supervisor/supervisor/blob/master/LICENSES.txt
-
-
-
-
-
