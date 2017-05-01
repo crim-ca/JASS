@@ -30,7 +30,6 @@ sys.path.insert(0, os.path.abspath('../'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
@@ -76,7 +75,7 @@ release = '0.1.1'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['setup*','create_db_if_not_exist*','builddoc*']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

@@ -1,114 +1,36 @@
+Installation
 ============
-INSTALLATION
-============
 
-Installation instructions for centos 6.4+
+Installation instructions for CentOS 6.6+
 
-**General prerequisites** needed mostly by python and pip.
+**External Requirements** :
+   MongoDB 2.6
 
-.. code-block:: bash
+Installing JASS via docker compose
+==================================
+The first possibility is to install and run jass via docker-compose. Docker-compose enables to start multiple services,
+as separate docker containers.
+**Requirements**
+  * Docker (see https://www.docker.com/ for installing and using docker)
+  * Docker compose (see https://docs.docker.com/compose/ for installing and using compose)
 
-	sudo yum install -y python2-devel
-	sudo yum install -y python-pip
-	sudo yum install -y wget
-	sudo yum install -y gcc
+Containers will be automatically build once docker compose is executed for the first time.
 
--------------------
-Installing Mongo DB
--------------------
+Installing JASS / MongoDB standalone
+====================================
 
-For more info : http://docs.mongodb.org/manual/tutorial/install-mongodb-on-red-hat-centos-or-fedora-linux/
+**JASS**
+For installing JASS copy the instrcutions from Dockerfile.
+JASS connection to MongoDB is defined by 'MONGO_HOST' environment variable.
+For connecting jass to MongoDB refer to docker-compose.yml
+To see enviroment variables used by both JASS and MongoDB refer to .env file.
 
-.. code-block:: bash
+**MongoDB**
+Refert to the section: jass_mongo in docker-compose.
+***Important*** JASS was tested with MongoDB 2.6
 
-	sudo vi /etc/yum.repos.d/mongodb-org-2.6.repo
-	# add this
-	[mongodb-org-2.6]
-	name=MongoDB 2.6 Repository
-	baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
-	gpgcheck=0
-	enabled=1
-	
-	sudo yum install mongodb-org
+Installing JASS standalone
+==========================
+External Requirements** :
+   MongoDB 2.6
 
-Start mongo service
-
-.. code-block:: bash
-
-	sudo service mongod start
-
----------------
-Installing JASS
----------------
-
-Unpack the project in a directory. We will use $ANNO_STO_HOME to designate it.
-In a shell
-
-.. code-block:: bash
-
-	export ANNO_STO_HOME=/opt/Service_Storage_Annotations_1_1_0
-	cd $ANNO_STO_HOME
-
-Install requirements
-
-.. code-block:: bash
-
-	sudo pip install -r requirements.pip
-
-Creating initial MongoDB structures for annotations
-IMPORTANT only run it once. It deletes all contents of in mongo db. 
-
-.. code-block:: bash
-
-	python $ANNO_STO_HOME/migrations/create_db.py $ANNO_STO_HOME/configs/dev/config.ini
-
-*********************************************************************
-Optional running the service stand alone with gunicorn and supervisor
-*********************************************************************
-
-Installing supervisor
-
-.. code-block:: bash
-
-	sudo yum install supervisor
-
-Upgrading it to the latest version. The reason to use yum first is to create init.d scripts. 
-
-.. code-block:: bash
-
-	sudo pip install --upgrade supervisor
-
-Change init.d scripts for supervsord
-change /etc/init.d/supervisord file to point to /etc/supervisord.conf
-**daemon supervisord -c /etc/supervisord.conf**
-
-Copy the example supervisord.conf to /etc/supervisord.conf
-
-.. code-block:: bash
-	
-	sudo cp $ANNO_STO_HOME/configs/dev  /etc/supervisord.conf
-
-Installing gunicorn
-
-.. code-block:: bash
-	
-	sudo pip install gunicorn
-
-Change **supervisor.conf**, to point to local files
-
-::
-
-  directory=/opt/Service_Storage_Annotations_1_1_0
-  environment=JASS_CONFIG_PATH=/opt/Service_Storage_Annotations_1_1_0/configs/dev/config.ini
-
-Start supervisor
-
-.. code-block:: bash
-	
-	sudo service supervisord start
-
-************************
-Reverse proxy with NGINX
-************************
-
-An example file NGIXN config file supplied in the **config/dev** directory.

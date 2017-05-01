@@ -1,0 +1,22 @@
+version: "2"
+
+services:
+  jass_mongo_dev:
+    image: tutum/mongodb
+    ports:
+      - "27017:27017"
+      - "28017:27017"
+    environment:
+      - MONGODB_DATABASE=anno
+      - MONGODB_USER=dev
+      - MONGODB_PASS=devpass
+
+
+  jass_mongo_test:
+    image: tutum/mongodb
+    ports:
+      - "27019:27017"
+    environment:
+      - MONGODB_DATABASE=annoTest
+      - MONGODB_USER=dev
+      - MONGODB_PASS=devpass

@@ -925,7 +925,10 @@ if __name__ == "__main__":
                       help='Configuration Directory')
 
     OPTS, ARGS = PARSER.parse_args()
-    settings.Settings.Instance().LoadConfig(OPTS.config_path) 
+    settings.Settings.Instance().LoadConfig(OPTS.config_path)
+    # Setting manually mongo host
+
+
     APP.run(port=OPTS.port, debug=OPTS.debug,host=OPTS.host)
 else:
     if os.environ.get('JASS_CONFIG_PATH') != None:

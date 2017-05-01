@@ -1,5 +1,7 @@
-Who authorizes releases: Stephane Bond (CRIM, DETI team).
+Provenance
+==========
 
-Release validation procedure: The data produced by the new release is inspected manually before public release.
+Who authorizes releases: Stéphane Bond (CRIM, DETI team).
 
-Release documentation : Release changes are documented in https://github.com/crim-ca/JASS/tree/master/RELEASE_NOTES.rst
+Release validation procedure: The data produced by the new release is inspected
+manually before public release.

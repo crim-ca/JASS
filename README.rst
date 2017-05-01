@@ -1,70 +1,102 @@
-===================================================
-NEP-143-1 JASS (JSON-LD Annotation Storage Service)
-===================================================    
+============================================
+NEP-143-1 JSON-LD Annotation Storage Service
+============================================
 
-The purpose of this application is to propose a rest API to store and manipulate very large amounts of
-JSON_LD (json-ld.org) compliant annotations. Annotation are stored in a Mongo DB backend.
+The purpose of this JSON-LD Annotation Storage Service (JASS) is to offer a
+REST API to store and manipulate large amounts of `JSON-LD
+<http://json-ld.org>`_ compliant annotations. Annotation are stored in a
+MongoDB backend.
  
+The documentation for this package lives `here
+<http://services.vesta.crim.ca/docs/jass/latest/>`_.
+
 -------
-LICENSE
+License
 -------
 
-see https://github.com/crim-ca/JASS/tree/master/THIRD_PARTY_LICENSES.rst
+See :ref:`LICENSE.rst <license_info>` file contents.
 
 ------------
-INSTALLATION
+Installation
 ------------
 
-See INSTALL.rst
+See :ref:`INSTALL.rst <install_directives>`.
 
--------------------
-MAJOR FUNCTIONALITY
--------------------
+---------------------
+Major Functionalities
+---------------------
 
-There is 3 elements which are stored in annotation storage:
+There are 3 elements which are stored in the annotation storage:
 
-- Documents. A documents contains multiple annotations. 
-- Annotations. An annotations describes the document it is contained in. 
-	An annotation can not exist by itself
-- Schema. Used to describe the structure of annotation. Usually used as JSON-LD context. 
+- Documents. A document contains multiple annotations.
+- Annotations. An annotation describes the document it is contained in. (An
+  annotation cannot exist by itself)
+- Schema. Used to describe the structure of an annotation. Usually used as
+  a JSON-LD context.
 
-Note that due to the choice of the back end storage the JSON content of a Document,Annotation or
-Schema can not exceed 16 MB in size.
+Note that due to the choice of the storage back end the JSON content of a
+Document, Annotation or Schema can not exceed 16 MB in size.
 
---------------------
-STARTING APPLICATION
---------------------
+-----------------
+Starting the JASS
+-----------------
 
-If supervisor vas installed it will running by default.
-For dev purposes it is easier to use local flask web server. 
-For this:
+ 1. Running with docker compose:
+ 2. Running JASS in a container
 
-Stop supervisor
-
-.. code-block:: bash 
-
-	sudo service supervisord start
-
-Make sure mongo db is working
+*****************************
+Running with docker compose:
+*****************************
+After cloning the repository, go to the project root and execute
 
 .. code-block:: bash
 
-	sudo service mongod status
+    docker-compose up -d
 
-Run storage using flask build in server. This will make the server run on: http://127.0.0.1:5000
+This command will create JASS and MongoDB containers and run them in background.
+The first time this command is run, it will build MongoDB and JASS containers. Once the build is finished (the shell will resume), it will take approximately 30 seconds for JASS to initialize MongoDB.
+
+In order to stop execution of both containers, go to project root and execute:
 
 .. code-block:: bash
 
-	cd $ANNO_STO_HOME
-	python -m src/program/simple_rest --port 5000 --host "0.0.0.0" --env "dev" > /tmp/anno_storage_out.txt
+    docker-compose stop
 
-Usage options
-::
- 
- --port, for the port on which the program will run
- --host, for the host on which the program will run.  0.0.0.0 to be accessed by everybody
- --env : configuration environnement. Will go to configs/<env> to get the installation config. 
+************************************
+Running physical JASS installation:
+************************************
+Set 'MONGO_HOST' environment variable to point to mongo host location. See docker-compose.yml for this variable contents.
+Start JASS using jass_startup.sh.
 
+===========
+Developers:
+===========
+For people who want to modify JASS.
+ 1. Start a dev/test instance of MongoDB. Data will be saved inside the instance.
+
+    .. code-block:: bash
+
+        # From project root
+        cd mongo-dev
+        docker-compose up -d
+
+
+ 2. Execute database initialisation script. This need to be run only once for test and dev environements.
+
+    .. code-block:: bash
+
+        # From project root
+        # Export dev configuration path and run initialization script
+        python create_db_if_not_exist.py "configs/dev/config.ini"
+        python create_db_if_not_exist.py "configs/dev/config.ini"
+        docker-compose up
+        # Use docker-compose stop to stop mongo containers
+
+ 3. Run JASS.
+
+    .. code-block:: bash
+
+        python -m jass.simple_rest
 
 ===============
 BASIC API USAGE
@@ -100,7 +132,7 @@ Get the document created earlier
 ***************************
 Update the document content
 ***************************
-:Note: When updating, the full content of the document is replaced. It is not currently possible to only update a part of a document. 
+:Note: When updating, the full content of the document is replaced. It is not currently possible to only update a part of a document.
 
 
 .. code-block:: bash
@@ -111,13 +143,13 @@ Update the document content
 ANNOTATIONS
 ===========
 
-**Annotations can be stored in 2 storage engines:** 
+**Annotations can be stored in 2 storage engines:**
 
-:Human Annotation Storage: Made for annotations which are normally viewed/manipulated by humans. These annotations can be accessed and modified one by one. Annotations in human annotation storage can be accessed/searched/created/modified/delete individually or by batches. All annotations are stored in human annotation storage by **default**. 
+:Human Annotation Storage: Made for annotations which are normally viewed/manipulated by humans. These annotations can be accessed and modified one by one. Annotations in human annotation storage can be accessed/searched/created/modified/delete individually or by batches. All annotations are stored in human annotation storage by **default**.
 
-:Large Annotation Storage: Made for large amounts of annotations which are mostly used for preprocessing. These annotations can be accessed by batches. It is possible to create/search/remove batches of annotations. When creating a batch of annotations, fields common to all annotations can be used to search for the batch. 
+:Large Annotation Storage: Made for large amounts of annotations which are mostly used for preprocessing. These annotations can be accessed by batches. It is possible to create/search/remove batches of annotations. When creating a batch of annotations, fields common to all annotations can be used to search for the batch.
 
-See documentation for more info. 
+See documentation for more info.
 
 :Note: Annotations manipulations can be done for annotations of one particular document at a time. This restriction was made for security and scalability issues.
 
@@ -138,8 +170,8 @@ Human Annotation Storage
 
 	curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d '{"common":{"@context":"test"},"data":[{"a":1},{"b":"1"},{"a":1,"c":2}]}' http://127.0.0.1:5000/document/<document_id>/annotations
 
-**Get all annotations** of the document, which contain field a equal to 1. 
-:Note: to do so we add an optional search parameter **jsonSelect** and specify {"a" : 1}. The syntax from search is the same as for mongo db: http://docs.mongodb.org/manual/reference/method/db.collection.find/. By default get is not restricted to the storage (ie it will return annotations which satify the criteria from bot human and batch storages). Use parameter storageType=1 parameter to restrict search to only human annotation storage     
+**Get all annotations** of the document, which contain field a equal to 1.
+:Note: to do so we add an optional search parameter **jsonSelect** and specify {"a" : 1}. The syntax from search is the same as for mongo db: http://docs.mongodb.org/manual/reference/method/db.collection.find/. By default get is not restricted to the storage (ie it will return annotations which satify the criteria from bot human and batch storages). Use parameter storageType=1 parameter to restrict search to only human annotation storage
 
 .. code-block:: bash
 
@@ -175,25 +207,25 @@ Large Annotation Storage
 
 	curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d '{"common":{"@context":"test"},"data":[{"d":1},{"d":1},{"d":1,"a":1}]}' http://127.0.0.1:5000/document/<document_id>/annotations?storageType=2
 
-**Get all annotations** for the document. 
+**Get all annotations** for the document.
 
 .. code-block:: bash
 
 	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations
-	
-**Get all annotations** only annotations from large storage     
+
+**Get all annotations** only annotations from large storage
 
 .. code-block:: bash
 
 	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?storageType=2
-	
-**Searching all annotations** with value a equals to 1. It is possible to see, that even if large storage contains, annotations with value, a = 1 ({"d":1,"a":1}), they can not be searched directly, a = 1 is not a common field of all annotations in the batch.     
+
+**Searching all annotations** with value a equals to 1. It is possible to see, that even if large storage contains, annotations with value, a = 1 ({"d":1,"a":1}), they can not be searched directly, a = 1 is not a common field of all annotations in the batch.
 
 .. code-block:: bash
 
 	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22a%22%3A1%7D
 
-**Searching all annotations** with value d equals to 1. It is possible to see that batch annotations are found.      
+**Searching all annotations** with value d equals to 1. It is possible to see that batch annotations are found.
 
 .. code-block:: bash
 

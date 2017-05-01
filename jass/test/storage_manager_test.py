@@ -5,9 +5,9 @@ import random
 import os
 from pymongo import MongoClient
 
-from ..storage_manager import StorageManager 
-from .. import settings
-from ..storage_exception import * 
+from jass.storage_manager import StorageManager
+from jass import settings
+from jass.storage_exception import *
 
 #other useful tools.
 
@@ -17,7 +17,7 @@ class TestStorageManager(unittest.TestCase):
         
         settings.Settings.Instance().LoadConfig(os.path.join(os.path.dirname(__file__),"..","..","configs","test","config.ini"))
         
-        c = MongoClient(settings.GetConfigValue("ServiceStockageAnnotations","MongoHost"),
+        c = MongoClient(settings.GetConfigValue("ServiceStockageAnnotations","MONGO_HOST"),
                                       int(settings.GetConfigValue("ServiceStockageAnnotations","MongoPort")))
         c.drop_database(settings.GetConfigValue("ServiceStockageAnnotations","MongoDb"))
         c.close()

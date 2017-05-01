@@ -29,7 +29,7 @@ class StorageManager:
         """
         try:
             host = settings.GetConfigValue("ServiceStockageAnnotations",
-                                           "MongoHost")
+                                           "MONGO_HOST")
             port = int(settings.GetConfigValue("ServiceStockageAnnotations",
                                                "MongoPort"))
             self.client = MongoClient(host, port)

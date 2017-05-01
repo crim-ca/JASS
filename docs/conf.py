@@ -8,7 +8,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         return Mock()
 
-MOCK_MODULES = ["bson","flask","werkzeug","gridfs","sqlite3","pymongo","bson.errors","simplejson","werkzeug.exceptions","pytz","bson.objectid"]
+MOCK_MODULES = ["singleton","generic_exception","bson","utility_rest","storage_manager","flask","custom_logger","werkzeug","gridfs","sqlite3","pymongo","bson.errors","simplejson","reverse_proxied","document_manager","mongo_utils","werkzeug.exceptions","settings","annotations_manager","storage_exception","pytz","error","bson.objectid"]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # -*- coding: utf-8 -*-
 #
@@ -41,7 +41,6 @@ sys.path.insert(0, os.path.abspath('../'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -88,7 +87,7 @@ release = '0.1.1'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['setup*','create_db_if_not_exist*','builddoc*']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

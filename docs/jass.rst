@@ -11,104 +11,104 @@ Subpackages
 Submodules
 ----------
 
-jass.annotations_manager module
--------------------------------
+jass\.annotations\_manager module
+---------------------------------
 
 .. automodule:: jass.annotations_manager
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.custom_logger module
--------------------------
+jass\.custom\_logger module
+---------------------------
 
 .. automodule:: jass.custom_logger
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.document_manager module
-----------------------------
+jass\.document\_manager module
+------------------------------
 
 .. automodule:: jass.document_manager
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.error module
------------------
+jass\.error module
+------------------
 
 .. automodule:: jass.error
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.generic_exception module
------------------------------
+jass\.generic\_exception module
+-------------------------------
 
 .. automodule:: jass.generic_exception
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.mongo_utils module
------------------------
+jass\.mongo\_utils module
+-------------------------
 
 .. automodule:: jass.mongo_utils
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.reverse_proxied module
----------------------------
+jass\.reverse\_proxied module
+-----------------------------
 
 .. automodule:: jass.reverse_proxied
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.settings module
---------------------
+jass\.settings module
+---------------------
 
 .. automodule:: jass.settings
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.simple_rest module
------------------------
+jass\.simple\_rest module
+-------------------------
 
 .. automodule:: jass.simple_rest
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.singleton module
----------------------
+jass\.singleton module
+----------------------
 
 .. automodule:: jass.singleton
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.storage_exception module
------------------------------
+jass\.storage\_exception module
+-------------------------------
 
 .. automodule:: jass.storage_exception
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.storage_manager module
----------------------------
+jass\.storage\_manager module
+-----------------------------
 
 .. automodule:: jass.storage_manager
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.utility_rest module
-------------------------
+jass\.utility\_rest module
+--------------------------
 
 .. automodule:: jass.utility_rest
     :members:

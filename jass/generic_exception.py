@@ -5,6 +5,9 @@ import re
 
 
 class GenericException(Exception):
+    """
+    Exception wrapper which defines custom functionality for the JASS.
+    """
     context = "GenericException"
     code = 0
 

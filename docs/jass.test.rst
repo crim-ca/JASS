@@ -1,19 +1,19 @@
-jass.test package
-=================
+jass\.test package
+==================
 
 Submodules
 ----------
 
-jass.test.annotations_manager_test module
------------------------------------------
+jass\.test\.annotations\_manager\_test module
+---------------------------------------------
 
 .. automodule:: jass.test.annotations_manager_test
     :members:
     :undoc-members:
     :show-inheritance:
 
-jass.test.storage_manager_test module
--------------------------------------
+jass\.test\.storage\_manager\_test module
+-----------------------------------------
 
 .. automodule:: jass.test.storage_manager_test
     :members:

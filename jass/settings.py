@@ -15,7 +15,7 @@ import singleton
 import custom_logger as logger
 from generic_exception import GenericException
 from singleton import Singleton
-
+import os
 
 class SettingsExceptions(GenericException):
     """
@@ -54,7 +54,8 @@ class Settings(Singleton):
         Generic accessor for configuration values
 
         :param namespace: Section of the INI
-        :param key: Actual key for which we want a value.
+        :param key: Actual key for which we want a value. if key exists as an environement variable,
+            it will use environement variable instead
         """
         return self.__config.get(namespace, key)
 
@@ -81,4 +82,7 @@ def GetConfigValue(namespace, key):
     :param namespace: Section of the INI
     :param key: Actual key for which we want a value.
     """
-    return Settings.Instance().GetConfigValue(namespace, key)
+    if key in os.environ:
+        return os.environ[key]
+    else:
+        return Settings.Instance().GetConfigValue(namespace, key)
