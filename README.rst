@@ -116,7 +116,7 @@ Creating a basic document
 
 .. code-block:: bash
 
-	curl -v -H "Content-Type: application/json" -d '{"@context":"test","a":"a","b":"b"}' http://127.0.0.1:5000/document
+	curl -X POST -H "Content-Type: application/json" -d '{"@context":"test","a":"a","b":"b"}' http://127.0.0.1:5000/document
 
 | This will return a document id
 | Ex:  **53fe308de1382336346f05f7**

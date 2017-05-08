@@ -4,29 +4,22 @@ services:
   jass_v1:
     build: .
     environment:
-      - MONGO_HOST=mongodb://${MONGODB_USER}:${MONGODB_PASS}@jass_mongo/${MONGODB_DATABASE}
+      - MONGO_HOST=mongodb://annouser:whateve4rlogin@mongo/anno
     expose:
       - 5000
     ports:
       - "5000:5000"
     depends_on:
-     - jass_mongo
+     - mongo
 
-  jass_mongo:
+  mongo:
     image: tutum/mongodb
     expose:
       - 27017
       - 28017
     environment:
-      - MONGODB_DATABASE=${MONGODB_DATABASE}
-      - MONGODB_USER=${MONGODB_USER}
-      - MONGODB_PASS=${MONGODB_PASS}
+      - MONGODB_DATABASE=anno
+      - MONGODB_USER=annouser
+      - MONGODB_PASS=whateve4rlogin
     volumes:
-      - mongo_data:/data
-
-volumes:
-  mongo_data:
-    driver_opts:
-        type: none
-        device: /var/jass_mongo_data
-        o: bind
+      - /data
