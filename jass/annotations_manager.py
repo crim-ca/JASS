@@ -192,10 +192,6 @@ class AnnotationManager(StorageManager):
             if '_id' in anno:
                 del anno["_id"]
             
-            if '@context' not in anno:
-                logger.logInfo(AnnotationException(4, str(anno), strDocId))
-                raise AnnotationException(4, str(anno), strDocId)
-
         if(self.isConnected()):
             try:
                 #make each annotation reference its document

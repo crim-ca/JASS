@@ -86,12 +86,9 @@ class StorageManager:
         if(self.isConnected()):
             if(jsonDoc is None):
                 raise MongoDocumentException(2)
-            # We dont want the client to specify an id.
+            # We don't want the client to specify an id.
             if '_id' in jsonDoc:
                 del jsonDoc["_id"]
-            if '@context' not in jsonDoc:
-                logger.logInfo(MongoDocumentException(3, jsonDoc))
-                raise MongoDocumentException(3, jsonDoc)
             try:
                 db = self.client[self.mongoDb]
                 coll = db[collection]
@@ -186,10 +183,6 @@ class StorageManager:
                 raise MongoDocumentException(5, "")
 
             mongo_utils.changeDocIdToMongoId(jsonDoc)
-
-            if '@context' not in jsonDoc:
-                logger.logInfo(MongoDocumentException(3, jsonDoc))
-                raise MongoDocumentException(3, jsonDoc)
 
             try:
                 db = self.client[self.mongoDb]
