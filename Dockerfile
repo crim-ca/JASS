@@ -29,7 +29,7 @@ RUN cd /tmp/install/netifaces/netifaces-0.10.4 &&\
 RUN pip install gunicorn
 
 ENV JASS_CONFIG_PATH "/opt/jass_deploy/config.ini"
-ENV JASS_VERSION 1.0.2
+ENV JASS_VERSION 1.0.3
 
 RUN mkdir -p /opt/jass_deploy
 
