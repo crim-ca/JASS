@@ -2,7 +2,7 @@
 # coding:utf-8
 
 import os
-import ConfigParser
+import configparser
 import sys
 from pymongo import MongoClient
 import subprocess
@@ -21,8 +21,8 @@ def createCollIfNotExist(db,collName,index):
     return coll
 
 def createDbIfNotExist(config_path):
-    print "Reading config from {0}".format(config_path)
-    SETTINGS = ConfigParser.SafeConfigParser()
+    # print "Reading config from {0}".format(config_path)
+    SETTINGS = configparser.Safeconfigparser()
     SETTINGS.read(config_path)
 
     retryTimes = 0
@@ -51,10 +51,10 @@ def createDbIfNotExist(config_path):
             createCollIfNotExist(db, SETTINGS.get("ServiceStockageAnnotations",
                                                   "BatchAnnotationCollection"), "doc_id")
             MC.close()
-            print "MongoBD creation Successful"
+            # print "MongoBD creation Successful"
             break
-        except Exception, e:
-            print "Connection to mongo failed. Retrying in 10 seconds. Reason: {0}".format(str(e))
+        except Exception as e:
+            # print "Connection to mongo failed. Retrying in 10 seconds. Reason: {0}".format(str(e))
             #print "Connection to mongo failed. Retrying in 10 seconds"
             time.sleep(10)
 

@@ -73,8 +73,7 @@ Here is the prefix by type:
 import optparse
 import logging
 import collections
-import httplib
-import simplejson
+import json
 import os
 
 # -- 3rd party ---------------------------------------------------------------
@@ -125,42 +124,42 @@ def _processCommonException(e):
     codes for reference
     """
     if (isinstance(e, StorageException)):
-        return error_response(httplib.SERVICE_UNAVAILABLE,
+        return error_response(http.client.SERVICE_UNAVAILABLE,
                               "Service Unavailable", 53000 + e.code,
                               "Error connecting to the backend storage")
     elif(isinstance(e, MongoDocumentException)):
         if(e.code == 0):
-            return error_response(httplib.INTERNAL_SERVER_ERROR,
+            return error_response(http.client.INTERNAL_SERVER_ERROR,
                                   "Internal Server Error", 52000,
                                   "Server can not currently process requests")
         else:
-            return error_response(httplib.UNPROCESSABLE_ENTITY,
+            return error_response(http.client.UNPROCESSABLE_ENTITY,
                                   "Cannot process Entity",
                                   52000 + e.code, str(e))
     elif(isinstance(e, AnnotationException)):
         if(e.code == 0):
-            return error_response(httplib.INTERNAL_SERVER_ERROR,
+            return error_response(http.client.INTERNAL_SERVER_ERROR,
                                   "Internal Server Error", 51000,
                                   "Server can not currently process requests")
         else:
-            return error_response(httplib.UNPROCESSABLE_ENTITY,
+            return error_response(http.client.UNPROCESSABLE_ENTITY,
                                   "Cannot process Entity", 51000 + e.code,
                                   str(e))
     elif(isinstance(e, StorageRestExceptions)):
         if(e.code == 2 or e.code == 3):
-            return error_response(httplib.NOT_FOUND, "Not Found",
+            return error_response(http.client.NOT_FOUND, "Not Found",
                                   50100 + e.code, str(e))
         else:
-            return error_response(httplib.UNPROCESSABLE_ENTITY,
+            return error_response(http.client.UNPROCESSABLE_ENTITY,
                                   "Cannot process entity", 50100 + e.code,
                                   str(e))
     elif(isinstance(e, BadRequest)):
         # Flask error
-        return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+        return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
     else:
         logger.logUnknownError("Annotation Storage REST Service Unknown Error",
                                str(e), 50000)
-        return error_response(httplib.INTERNAL_SERVER_ERROR,
+        return error_response(http.client.INTERNAL_SERVER_ERROR,
                               "Internal Server Error", "",
                               "Server can not currently process requests")
 
@@ -252,7 +251,7 @@ def log_request():
                 logger.logUnknownDebug("Annotation Storage Request Data:", request.data)
             else:
                 logger.logUnknownDebug("Annotation Storage Request Data:", " Too much data for output")
-    except Exception, e:
+    except Exception as e:
         logger.logUnknownDebug("Annotation Storage Request Data:", "Failed to ouput data.")
     logger.logUnknownDebug("Annotation Storage Request Arguments:", request.args)
     
@@ -326,14 +325,14 @@ def simple_requests_handler(api_request):
 # ==============================================================================
 @APP.errorhandler(400)
 def internal_error400(error):
-    return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+    return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
 
 @APP.errorhandler(500)
 def internal_error500(error):
     logger.logUnknownError("Annotation Storage REST Service Unknown Critical"
                            " Error", str(error), 50000)
-    return error_response(httplib.INTERNAL_SERVER_ERROR,
+    return error_response(http.client.INTERNAL_SERVER_ERROR,
                           "Internal Server Error", "",
                           "Server can not currently process requests")
 
@@ -375,9 +374,9 @@ def createDocument():
             logger.logUnknownDebug("Create Document","Id: {0}".format(docId))
             return jsonify({"id": docId}), 201
         else:
-            return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
-    except Exception, e:
+    except Exception as e:
         return _processCommonException(e)
     finally:
         man.disconnect()
@@ -481,9 +480,9 @@ def document(document_id):
             # exception
             return jsonify({}), 204
         else:
-            return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
-    except Exception, e:
+    except Exception as e:
         return _processCommonException(e)
     finally:
         man.disconnect()
@@ -506,9 +505,9 @@ def createAnnotationSchema():
             logger.logUnknownDebug("Create Schema","Id: {0}".format(docId))
             return jsonify({"id": docId}), 201
         else:
-            return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
-    except Exception, e:
+    except Exception as e:
         return _processCommonException(e)
     finally:
         man.disconnect()
@@ -554,9 +553,9 @@ def annotationSchema(schema_id):
             # exception
             return jsonify({}), 204
         else:
-            return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
-    except Exception, e:
+    except Exception as e:
         return _processCommonException(e)
     finally:
         man.disconnect()
@@ -686,7 +685,7 @@ def documentAnnotationS(document_id):
                 if not jsonSelect:
                     jsonSelect = {}
                 else:
-                    jsonSelect = simplejson.loads(jsonSelect)
+                    jsonSelect = json.loads(jsonSelect)
                 if not storageType:
                     storageType = 0
                 else:
@@ -695,7 +694,7 @@ def documentAnnotationS(document_id):
                     batchFormat = 0
                 else:
                     batchFormat = int(batchFormat)
-            except Exception, e:
+            except Exception as e:
                 raise (StorageRestExceptions(5))
             batch = man.getAnnotationS([document_id], jsonSelect, batchFormat,
                                        storageType)
@@ -703,7 +702,7 @@ def documentAnnotationS(document_id):
 
         elif request.method == 'PUT':
             logger.logUnknownDebug("Update Annotations"," For document Id: {0}".format(document_id))
-            return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
         elif request.method == 'POST':
             jsonBatch = request.json
@@ -717,7 +716,7 @@ def documentAnnotationS(document_id):
                 else:
                     batchFormat = int(batchFormat)
                 logger.logUnknownDebug("Create Annotations"," For document Id: {0} StorageType :{1},BatchFormat:{2}, jsonBatch: {3}".format(document_id,str(storageType),str(batchFormat),str(jsonBatch)))
-            except Exception, e:
+            except Exception as e:
                 raise (StorageRestExceptions(5))
 
             nbAnnotationsCreated = man.createAnnotationS(jsonBatch,
@@ -734,12 +733,12 @@ def documentAnnotationS(document_id):
                 if not jsonSelect:
                     jsonSelect = {}
                 else:
-                    jsonSelect = simplejson.loads(jsonSelect)
+                    jsonSelect = json.loads(jsonSelect)
                 if not storageType:
                     storageType = 0
                 else:
                     storageType = int(storageType)
-            except Exception, e:
+            except Exception as e:
                 raise (StorageRestExceptions(5))
 
             nbAnnotationsDeleted = man.deleteAnnotationS([document_id],
@@ -748,9 +747,9 @@ def documentAnnotationS(document_id):
             logger.logUnknownDebug("Delete Annotations"," Number of deleted annotations {0} For document Id: {1}".format(str(nbAnnotationsDeleted),document_id))
             return jsonify({"nDeleted": nbAnnotationsDeleted}), 200
         else:
-            return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
-    except Exception, e:
+    except Exception as e:
         return _processCommonException(e)
     finally:
         man.disconnect()
@@ -805,9 +804,9 @@ def createDocumentAnnotation(document_id):
             docId = man.createAnnotation(request.json, document_id)
             return jsonify({"id": docId}), 201
         else:
-            return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
-    except Exception, e:
+    except Exception as e:
         return _processCommonException(e)
     finally:
         man.disconnect()
@@ -900,9 +899,9 @@ def documentAnnotation(document_id, annotation_id):
             # exception
             return jsonify({}), 204
         else:
-            return error_response(httplib.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
-    except Exception, e:
+    except Exception as e:
         return _processCommonException(e)
     finally:
         man.disconnect()

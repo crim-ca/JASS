@@ -11,7 +11,6 @@ placed here to keep the rest_route module as clear as possible.
 import re
 import sqlite3
 import os
-import httplib
 import datetime
 import logging
 
@@ -109,10 +108,10 @@ def get_server_restart_time():
         ExtendedStatus On
     """
 
-    conn = httplib.HTTPConnection(settings.GetConfigValue('Server', 'Name'))
+    conn = http.client.HTTPConnection(settings.GetConfigValue('Server', 'Name'))
     conn.request("GET", "/server-status")
     response = conn.getresponse()
-    if response.status == httplib.OK:
+    if response.status == http.client.OK:
         body = response.read()
         restart_time_match = re.search('<dt>Restart Time: [a-zA-Z]*, '
                                        '([^ ]* [0-9:]{8}) (.*)</dt>',

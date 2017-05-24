@@ -1,5 +1,5 @@
 import unittest
-import simplejson
+import json
 import logging
 import random
 import os
@@ -31,7 +31,7 @@ class TestAnnotationsManager(unittest.TestCase):
         
     def l(self,strContent):
         #shortcut to load json
-        return simplejson.loads(strContent)
+        return json.loads(strContent)
         
 
     def test_createAnnotationsS(self):

@@ -39,10 +39,10 @@ class StorageManager:
             self.m_connected = True
             return True
 
-        except pymongo.errors.ConnectionFailure, e:
+        except pymongo.errors.ConnectionFailure as e:
             logger.logError(StorageException(1))
 
-        except Exception, e:
+        except Exception as e:
             logger.logUnknownError("Annotation Storage Create Document",
                                    "", e)
             self.m_connected = False
@@ -94,7 +94,7 @@ class StorageManager:
                 coll = db[collection]
                 doc_id = coll.insert(jsonDoc)
                 return str(doc_id)
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Create Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -111,7 +111,7 @@ class StorageManager:
 
         :param documentId: Document ID
         
-        :return : If the document is found returns a simplejson object of the
+        :return : If the document is found returns a json object of the
                   document, otherwise returns None
 
             Document content returned (mandatory). Other user fields may be present:
@@ -132,9 +132,9 @@ class StorageManager:
                 doc = coll.find_one({"_id": ObjectId(strDocId)})
                 mongo_utils.changeDocIdToString(doc)
                 return doc
-            except InvalidId, e:
+            except InvalidId:
                 return None
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Get Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -189,7 +189,7 @@ class StorageManager:
                 coll = db[collection]
                 doc_id = coll.save(jsonDoc)
                 return str(doc_id)
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Update Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -234,9 +234,9 @@ class StorageManager:
                 coll = db[collection]
                 res = coll.find(jsonQuery)
                 return res
-            except StorageException, e:
+            except StorageException as e:
                 raise e
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Get Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -268,9 +268,9 @@ class StorageManager:
                     raise StorageException(2)
                 else:
                     return res['n']
-            except StorageException, e:
+            except StorageException as e:
                 raise e
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Delete Document",
                                        "", e)
                 raise MongoDocumentException(0)

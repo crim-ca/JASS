@@ -43,7 +43,7 @@ def get_ignore_modules_config(rootModuleDirectory):
             del notProjectModuleNames[moduleName]
     
     # remove existing reserved modules
-    for moduleName in ["os","sys","unittest","random","datetime","optparse","re","collections","logging","ConfigParser","traceback","httplib"]:
+    for moduleName in ["os","sys","unittest","random","datetime","optparse","re","collections","logging","configparser","traceback","httplib"]:
         if moduleName in notProjectModuleNames:
             del notProjectModuleNames[moduleName]
     
@@ -63,7 +63,7 @@ def update_config_and_build_doc(projectPath,rootModule):
     """
     # update sphinx docs
     os.chdir(projectPath)
-    print "Entering{0}".format(projectPath)
+    # print "Entering{0}".format(projectPath)
     os.system("rm -rf {0}/docs/*".format(projectPath))
 
     # Files to exclude from building in documentation. 

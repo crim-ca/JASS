@@ -1,8 +1,8 @@
 import unittest
-import simplejson
 import logging
 import random
 import os
+import json
 from pymongo import MongoClient
 
 from jass.storage_manager import StorageManager
@@ -30,7 +30,7 @@ class TestStorageManager(unittest.TestCase):
         
     def l(self,strContent):
         #shortcut to load json
-        return simplejson.loads(strContent)
+        return json.loads(strContent)
         
     def test_createMongoDocument(self):
         #try:

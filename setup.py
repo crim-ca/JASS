@@ -19,12 +19,10 @@ with open('RELEASE_NOTES.rst') as history_file:
 
 from __meta__ import __version__, __author__, __contact__
 
-REQUIREMENTS = ["Flask==0.10.1",
-                "Sphinx==1.3.1",
-                "pytz==2014.2",
-                "simplejson==3.4.0",
-                "wsgiref==0.1.2",
-                "pymongo==2.7"]
+REQUIREMENTS = ["Flask",
+                "mock",
+                "pytz",
+                "pymongo"]
 
 setup(
     # -- Meta information --------------------------------------------------
@@ -40,9 +38,8 @@ setup(
     keywords='CANARIE, Annotation Storage, Services',
     classifiers=[
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
+        "Programming Language :: Python :: 3",
+        'Programming Language :: Python :: 3.6',
     ],
 
     # -- Package structure -------------------------------------------------
