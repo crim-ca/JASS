@@ -75,17 +75,18 @@ import logging
 import collections
 import json
 import os
+import http.client
 
 # -- 3rd party ---------------------------------------------------------------
 from flask import Flask
-from flask import request , current_app
+from flask import request, current_app
 from flask import render_template
 from flask import jsonify
 
 # Utility
 from utility_rest import request_wants_json
 from utility_rest import get_canarie_api_response
-from utility_rest import error_response    #OK
+from utility_rest import error_response  # OK
 
 # -- Project specific --------------------------------------------------------
 import settings
@@ -100,15 +101,15 @@ import custom_logger as logger
 from werkzeug.exceptions import BadRequest
 from reverse_proxied import ReverseProxied
 
-
 # -- Configuration -----------------------------------------------------------
 
 FILE_ROOT = os.path.dirname(__file__)
-TEMPLATE_PATH = os.path.join(FILE_ROOT,"..","templates")
+TEMPLATE_PATH = os.path.join(FILE_ROOT, "..", "templates")
 
 APP = Flask(__name__,
-            static_folder=os.path.join(FILE_ROOT,"..","static"),
+            static_folder=os.path.join(FILE_ROOT, "..", "static"),
             template_folder=TEMPLATE_PATH)
+
 
 # -- Accessibility -----------------------------------------------------------
 # All the accessibility functions will be defined here
@@ -127,8 +128,8 @@ def _processCommonException(e):
         return error_response(http.client.SERVICE_UNAVAILABLE,
                               "Service Unavailable", 53000 + e.code,
                               "Error connecting to the backend storage")
-    elif(isinstance(e, MongoDocumentException)):
-        if(e.code == 0):
+    elif (isinstance(e, MongoDocumentException)):
+        if (e.code == 0):
             return error_response(http.client.INTERNAL_SERVER_ERROR,
                                   "Internal Server Error", 52000,
                                   "Server can not currently process requests")
@@ -136,8 +137,8 @@ def _processCommonException(e):
             return error_response(http.client.UNPROCESSABLE_ENTITY,
                                   "Cannot process Entity",
                                   52000 + e.code, str(e))
-    elif(isinstance(e, AnnotationException)):
-        if(e.code == 0):
+    elif (isinstance(e, AnnotationException)):
+        if (e.code == 0):
             return error_response(http.client.INTERNAL_SERVER_ERROR,
                                   "Internal Server Error", 51000,
                                   "Server can not currently process requests")
@@ -145,15 +146,15 @@ def _processCommonException(e):
             return error_response(http.client.UNPROCESSABLE_ENTITY,
                                   "Cannot process Entity", 51000 + e.code,
                                   str(e))
-    elif(isinstance(e, StorageRestExceptions)):
-        if(e.code == 2 or e.code == 3):
+    elif (isinstance(e, StorageRestExceptions)):
+        if (e.code == 2 or e.code == 3):
             return error_response(http.client.NOT_FOUND, "Not Found",
                                   50100 + e.code, str(e))
         else:
             return error_response(http.client.UNPROCESSABLE_ENTITY,
                                   "Cannot process entity", 50100 + e.code,
                                   str(e))
-    elif(isinstance(e, BadRequest)):
+    elif (isinstance(e, BadRequest)):
         # Flask error
         return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
     else:
@@ -168,7 +169,7 @@ def _convStorageIdToDocId(doc):
     """
     Function convert doc to storageId.
     """
-    if(not doc):
+    if (not doc):
         return None
     if '_id' in doc:
         doc["id"] = doc["_id"]
@@ -179,7 +180,7 @@ def _convDocIdToStorageId(doc):
     """
     Function convert storageId to doc id.
     """
-    if(not doc):
+    if (not doc):
         return None
     if 'id' in doc:
         doc["_id"] = doc["id"]
@@ -190,13 +191,14 @@ def _getStorageTypeFromId(strId):
     """
     Returns the storage type from object id.
     """
-    if(strId is None or not type(strId) is 'str'):
+    if (strId is None or not type(strId) is 'str'):
         return -1
 
-    if(strId.find("_") < 0):
+    if (strId.find("_") < 0):
         return AnnotationManager.HUMAN_STORAGE
     else:
         return AnnotationManager.BATCH_STORAGE
+
 
 # -- Flask routes ------------------------------------------------------------
 # TODO: add access validation.
@@ -240,13 +242,14 @@ canarie_api_valid_requests = ['doc',
                               'licence',
                               'provenance']
 
+
 @APP.before_request
 def log_request():
     logger.logUnknownDebug("Annotation Storage Request url:", request.url)
     logger.logUnknownDebug("Annotation Storage Request type:", request.method)
     try:
         cl = request.content_length
-        if cl is not None: 
+        if cl is not None:
             if cl < 10000:
                 logger.logUnknownDebug("Annotation Storage Request Data:", request.data)
             else:
@@ -254,8 +257,8 @@ def log_request():
     except Exception as e:
         logger.logUnknownDebug("Annotation Storage Request Data:", "Failed to ouput data.")
     logger.logUnknownDebug("Annotation Storage Request Arguments:", request.args)
-    
-    
+
+
 @APP.route("/info")
 def info():
     """
@@ -277,8 +280,8 @@ def info():
                              settings.GetConfigValue(canarie_config_section, category)))
 
     service_info.append(('tags',
-                        settings.GetConfigValue(canarie_config_section, 'tags').
-                        split(',')))
+                         settings.GetConfigValue(canarie_config_section, 'tags').
+                         split(',')))
 
     service_info = collections.OrderedDict(service_info)
 
@@ -287,16 +290,18 @@ def info():
 
     return render_template('default.html', Title="Info", Tags=service_info)
 
+
 @APP.route("/stats")
 def stats():
     """
     Required by CANARIE.
     """
-    
-    service_stats ={}
+
+    service_stats = {}
     if request_wants_json():
         return jsonify(service_stats)
     return render_template('default.html', Title="Stats", Tags=service_stats)
+
 
 @APP.route('/home')
 def home():
@@ -304,7 +309,7 @@ def home():
     Return the home page for a particular service
     """
     canarie_config_section = "canarie_info"
-    return get_canarie_api_response(canarie_config_section,TEMPLATE_PATH ,'home')
+    return get_canarie_api_response(canarie_config_section, TEMPLATE_PATH, 'home')
 
 
 @APP.route("/<any(" +
@@ -314,7 +319,8 @@ def simple_requests_handler(api_request):
     Handle simple requests required by CANARIE
     """
     canarie_config_section = "canarie_info"
-    return get_canarie_api_response(canarie_config_section,TEMPLATE_PATH ,api_request)
+    return get_canarie_api_response(canarie_config_section, TEMPLATE_PATH, api_request)
+
 
 # ==============================================================================
 #  CANARIE END
@@ -371,7 +377,7 @@ def createDocument():
         man.connect()
         if request.method == 'POST':
             docId = man.createMongoDocument(request.json)
-            logger.logUnknownDebug("Create Document","Id: {0}".format(docId))
+            logger.logUnknownDebug("Create Document", "Id: {0}".format(docId))
             return jsonify({"id": docId}), 201
         else:
             return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
@@ -457,15 +463,15 @@ def document(document_id):
                                                   "documentCollection"))
         man.connect()
         if request.method == 'GET':
-            logger.logUnknownDebug("Get Document","Id: {0}".format(document_id))
+            logger.logUnknownDebug("Get Document", "Id: {0}".format(document_id))
             doc = man.getMongoDocument(document_id)
             _convStorageIdToDocId(doc)
-            if(doc is None):
+            if (doc is None):
                 raise (StorageRestExceptions(2))
             else:
                 return jsonify(doc)
         elif request.method == 'PUT':
-            logger.logUnknownDebug("Update Document","Document {0}".format(document_id))
+            logger.logUnknownDebug("Update Document", "Document {0}".format(document_id))
             doc = request.json
             _convDocIdToStorageId(doc)
             if '_id' in doc and doc["_id"] != document_id:
@@ -474,7 +480,7 @@ def document(document_id):
                 docId = man.updateMongoDocument(doc)
                 return jsonify({"id": docId})
         elif request.method == 'DELETE':
-            logger.logUnknownDebug("Delete Document","Id: {0}".format(document_id))
+            logger.logUnknownDebug("Delete Document", "Id: {0}".format(document_id))
             man.deleteMongoDocument(document_id)
             # Whenever it is true or false we don't care, if there is no
             # exception
@@ -486,6 +492,7 @@ def document(document_id):
         return _processCommonException(e)
     finally:
         man.disconnect()
+
 
 @APP.route('/annotationSchema', methods=['POST'])
 def createAnnotationSchema():
@@ -502,7 +509,7 @@ def createAnnotationSchema():
         man.connect()
         if request.method == 'POST':
             docId = man.createMongoDocument(request.json)
-            logger.logUnknownDebug("Create Schema","Id: {0}".format(docId))
+            logger.logUnknownDebug("Create Schema", "Id: {0}".format(docId))
             return jsonify({"id": docId}), 201
         else:
             return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
@@ -513,7 +520,7 @@ def createAnnotationSchema():
         man.disconnect()
 
 
-@APP.route('/annotationSchema/<schema_id>', methods=['GET',  'PUT',  'DELETE'])
+@APP.route('/annotationSchema/<schema_id>', methods=['GET', 'PUT', 'DELETE'])
 def annotationSchema(schema_id):
     """
     :route: **/annotationSchema/<schema_id>**
@@ -528,10 +535,10 @@ def annotationSchema(schema_id):
                                                   "SchemaCollection"))
         man.connect()
         if request.method == 'GET':
-            logger.logUnknownDebug("Get Schema","Id: {0}".format(schema_id))
+            logger.logUnknownDebug("Get Schema", "Id: {0}".format(schema_id))
             doc = man.getMongoDocument(schema_id)
             _convStorageIdToDocId(doc)
-            if(doc is None):
+            if (doc is None):
                 raise (StorageRestExceptions(2))
             else:
                 return jsonify(doc)
@@ -541,13 +548,13 @@ def annotationSchema(schema_id):
             if '_id' in doc and doc["_id"] != schema_id:
                 raise (StorageRestExceptions(1))
             else:
-                logger.logUnknownDebug("Update Schema","Id: {0}".format(schema_id))
+                logger.logUnknownDebug("Update Schema", "Id: {0}".format(schema_id))
                 docId = man.updateMongoDocument(request.json)
-                if(docId is None):
+                if (docId is None):
                     raise (StorageRestExceptions(3))
                 return jsonify({"id": docId})
         elif request.method == 'DELETE':
-            logger.logUnknownDebug("Delete Schema","Id: {0}".format(schema_id))
+            logger.logUnknownDebug("Delete Schema", "Id: {0}".format(schema_id))
             man.deleteMongoDocument(schema_id)
             # Whenever it is true or false we don't care, if there is no
             # exception
@@ -559,6 +566,7 @@ def annotationSchema(schema_id):
         return _processCommonException(e)
     finally:
         man.disconnect()
+
 
 @APP.route('/document/<document_id>/annotations',
            methods=['GET', 'PUT', 'POST', 'DELETE'])
@@ -679,7 +687,7 @@ def documentAnnotationS(document_id):
         storageType = request.args.get('storageType')
         batchFormat = request.args.get('batchFormat')
 
-        #Note for batch operations all ids are replaced in man
+        # Note for batch operations all ids are replaced in man
         if request.method == 'GET':
             try:
                 if not jsonSelect:
@@ -701,7 +709,7 @@ def documentAnnotationS(document_id):
             return jsonify(batch)
 
         elif request.method == 'PUT':
-            logger.logUnknownDebug("Update Annotations"," For document Id: {0}".format(document_id))
+            logger.logUnknownDebug("Update Annotations", " For document Id: {0}".format(document_id))
             return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
 
         elif request.method == 'POST':
@@ -715,7 +723,9 @@ def documentAnnotationS(document_id):
                     batchFormat = 1
                 else:
                     batchFormat = int(batchFormat)
-                logger.logUnknownDebug("Create Annotations"," For document Id: {0} StorageType :{1},BatchFormat:{2}, jsonBatch: {3}".format(document_id,str(storageType),str(batchFormat),str(jsonBatch)))
+                logger.logUnknownDebug("Create Annotations",
+                                       " For document Id: {0} StorageType :{1},BatchFormat:{2}, jsonBatch: {3}".format(
+                                           document_id, str(storageType), str(batchFormat), str(jsonBatch)))
             except Exception as e:
                 raise (StorageRestExceptions(5))
 
@@ -729,7 +739,7 @@ def documentAnnotationS(document_id):
             # Whenever it is true or false we don't care, if there is no
             # exception
             try:
-                logger.logUnknownDebug("Delete Annotations"," For document Id: {0}".format(document_id))
+                logger.logUnknownDebug("Delete Annotations", " For document Id: {0}".format(document_id))
                 if not jsonSelect:
                     jsonSelect = {}
                 else:
@@ -744,7 +754,9 @@ def documentAnnotationS(document_id):
             nbAnnotationsDeleted = man.deleteAnnotationS([document_id],
                                                          jsonSelect,
                                                          storageType)
-            logger.logUnknownDebug("Delete Annotations"," Number of deleted annotations {0} For document Id: {1}".format(str(nbAnnotationsDeleted),document_id))
+            logger.logUnknownDebug("Delete Annotations",
+                                   " Number of deleted annotations {0} For document Id: {1}".format(
+                                       str(nbAnnotationsDeleted), document_id))
             return jsonify({"nDeleted": nbAnnotationsDeleted}), 200
         else:
             return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
@@ -800,7 +812,7 @@ def createDocumentAnnotation(document_id):
     try:
         man.connect()
         if request.method == 'POST':
-            logger.logUnknownDebug("Create Annotation"," For document Id: {0}".format(document_id))
+            logger.logUnknownDebug("Create Annotation", " For document Id: {0}".format(document_id))
             docId = man.createAnnotation(request.json, document_id)
             return jsonify({"id": docId}), 201
         else:
@@ -872,14 +884,14 @@ def documentAnnotation(document_id, annotation_id):
                                       "HumanAnnotationCollection")
         man.addStorageCollection(AnnotationManager.HUMAN_STORAGE, hac)
         man.connect()
-        if(not _getStorageTypeFromId(AnnotationManager.HUMAN_STORAGE)):
+        if (not _getStorageTypeFromId(AnnotationManager.HUMAN_STORAGE)):
             raise (StorageRestExceptions(4))
 
         if request.method == 'GET':
-            logger.logUnknownDebug("Get Annotation"," For document Id: {0}".format(document_id))
+            logger.logUnknownDebug("Get Annotation", " For document Id: {0}".format(document_id))
             doc = man.getAnnotation(annotation_id)
             _convStorageIdToDocId(doc)
-            if(doc is None):
+            if (doc is None):
                 raise (StorageRestExceptions(2))
             else:
                 return jsonify(doc)
@@ -889,11 +901,11 @@ def documentAnnotation(document_id, annotation_id):
             if '_id' in doc and doc["_id"] != annotation_id:
                 raise (StorageRestExceptions(1))
             else:
-                logger.logUnknownDebug("Update Annotation"," For document Id: {0}".format(document_id))
+                logger.logUnknownDebug("Update Annotation", " For document Id: {0}".format(document_id))
                 man.updateAnnotation(doc, annotation_id)
                 return jsonify({})
         elif request.method == 'DELETE':
-            logger.logUnknownDebug("Delete Annotation"," For document Id: {0}".format(document_id))
+            logger.logUnknownDebug("Delete Annotation", " For document Id: {0}".format(document_id))
             man.deleteAnnotation(annotation_id)
             # Whenever it is true or false we don't care, if there is no
             # exception
@@ -914,13 +926,13 @@ if __name__ == "__main__":
 
     PARSER = optparse.OptionParser()
     PARSER.add_option('-p', '--port', dest='port', type=int, default=5000)
-    PARSER.add_option( '--host', dest='host',default="127.0.0.1")
+    PARSER.add_option('--host', dest='host', default="127.0.0.1")
     PARSER.add_option('-d', '--debug', action="store_true", dest='debug',
                       default=False)
 
     PARSER.add_option('--config',
                       dest="config_path",
-                      default=os.path.join(os.path.dirname(FILE_ROOT),"configs","dev","config.ini"),
+                      default=os.path.join(os.path.dirname(FILE_ROOT), "configs", "dev", "config.ini"),
                       help='Configuration Directory')
 
     OPTS, ARGS = PARSER.parse_args()
@@ -928,7 +940,7 @@ if __name__ == "__main__":
     # Setting manually mongo host
 
 
-    APP.run(port=OPTS.port, debug=OPTS.debug,host=OPTS.host)
+    APP.run(port=OPTS.port, debug=OPTS.debug, host=OPTS.host)
 else:
     if os.environ.get('JASS_CONFIG_PATH') != None:
         APP.wsgi_app = ReverseProxied(APP.wsgi_app)
