@@ -58,3 +58,6 @@ target/
 
 # PyCharm
 .idea
+
+# 2to3
+*.bak

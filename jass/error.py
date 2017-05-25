@@ -2,7 +2,7 @@
 # coding:utf-8
 
 import http.client
-import settings
+from . import settings
 import configparser
 
 

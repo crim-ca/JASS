@@ -1,9 +1,9 @@
 import pymongo
 from pymongo import MongoClient
-import mongo_utils
-import settings
-import custom_logger as logger
-from storage_exception import *
+from . import mongo_utils
+from . import settings
+from . import custom_logger as logger
+from .storage_exception import *
 from bson.objectid import ObjectId
 from bson.errors import *
 

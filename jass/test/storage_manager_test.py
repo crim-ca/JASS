@@ -55,7 +55,7 @@ class TestStorageManager(unittest.TestCase):
         self.assertTrue(id != None, "Object id must be not null %s" % (id))
         gotDocument = self.d.getMongoDocument(id)
         doc = self.assertNotEqual(None,gotDocument ,"Should be a valid object" + str(gotDocument))
-        self.assertTrue(gotDocument.has_key('@context'), "Document should have a context key")
+        self.assertTrue('@context' in gotDocument, "Document should have a context key")
         self.assertEqual(gotDocument['@context'], context, "Document should have context")
         self.assertEqual(id,gotDocument['_id'], "Document id should be the same")
 

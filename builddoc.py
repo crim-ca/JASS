@@ -47,7 +47,7 @@ def get_ignore_modules_config(rootModuleDirectory):
         if moduleName in notProjectModuleNames:
             del notProjectModuleNames[moduleName]
     
-    notProjectModuleNamesArr =notProjectModuleNames.keys() 
+    notProjectModuleNamesArr =list(notProjectModuleNames.keys()) 
     
     notProjectModuleNamesArr = [x for x in notProjectModuleNamesArr if x]
     ignoreModuleForConfig = '["{0}"]'.format('","'.join(notProjectModuleNamesArr))

@@ -10,10 +10,10 @@ import os
 import configparser
 
 # --Project specific------------------------------------------
-import singleton
-import custom_logger as logger
-from generic_exception import GenericException
-from singleton import Singleton
+from . import singleton
+from . import custom_logger as logger
+from .generic_exception import GenericException
+from .singleton import Singleton
 import os
 
 
