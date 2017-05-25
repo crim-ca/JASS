@@ -29,29 +29,29 @@ class Error:
 
         # Dict mapping error codes to an html status code and a msg id tuple
         self.__error_code_dict[self.NO_ERROR] = \
-            (http.client.OK, 'NO_ERROR')
+            (http.HTTPStatus.OK, 'NO_ERROR')
         self.__error_code_dict[self.UNKNOWN] = \
-            (http.client.INTERNAL_SERVER_ERROR, 'UNKNOWN')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'UNKNOWN')
         self.__error_code_dict[self.NOT_INITIALIZED] = \
-            (http.client.INTERNAL_SERVER_ERROR, 'NOT_INITIALIZED')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'NOT_INITIALIZED')
         self.__error_code_dict[self.URL_NOT_VALID] = \
-            (http.client.BAD_REQUEST, 'URL_NOT_VALID')
+            (http.HTTPStatus.BAD_REQUEST, 'URL_NOT_VALID')
         self.__error_code_dict[self.FILE_NOT_FOUND] = \
-            (http.client.NOT_FOUND, 'FILE_NOT_FOUND')
+            (http.HTTPStatus.NOT_FOUND, 'FILE_NOT_FOUND')
         self.__error_code_dict[self.DB_WRITING_ERROR] = \
-            (http.client.INTERNAL_SERVER_ERROR, 'DB_WRITING_ERROR')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'DB_WRITING_ERROR')
         self.__error_code_dict[self.DB_READING_ERROR] = \
-            (http.client.INTERNAL_SERVER_ERROR, 'DB_READING_ERROR')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'DB_READING_ERROR')
         self.__error_code_dict[self.BAD_SERVICE_CONFIGURATION] = \
-            (http.client.INTERNAL_SERVER_ERROR, 'BAD_SERVICE_CONFIGURATION')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'BAD_SERVICE_CONFIGURATION')
         self.__error_code_dict[self.SERVICE_NOT_FOUND] = \
-            (http.client.BAD_REQUEST, 'SERVICE_NOT_FOUND')
+            (http.HTTPStatus.BAD_REQUEST, 'SERVICE_NOT_FOUND')
         self.__error_code_dict[self.UNKNOWN_UUID] = \
-            (http.client.BAD_REQUEST, 'UNKNOWN_UUID')
+            (http.HTTPStatus.BAD_REQUEST, 'UNKNOWN_UUID')
         self.__error_code_dict[self.ANNOTATION_SOURCE_NOT_VALID] = \
-            (http.client.BAD_REQUEST, 'ANNOTATION_SOURCE_NOT_VALID')
+            (http.HTTPStatus.BAD_REQUEST, 'ANNOTATION_SOURCE_NOT_VALID')
         self.__error_code_dict[self.MISSING_PARAMETER] = \
-            (http.client.BAD_REQUEST, 'MISSING_PARAMETER')
+            (http.HTTPStatus.BAD_REQUEST, 'MISSING_PARAMETER')
 
     def is_ok(self):
         return self.error_code == self.NO_ERROR

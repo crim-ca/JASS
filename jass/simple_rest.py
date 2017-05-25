@@ -125,42 +125,42 @@ def _processCommonException(e):
     codes for reference
     """
     if (isinstance(e, StorageException)):
-        return error_response(http.client.SERVICE_UNAVAILABLE,
+        return error_response(http.HTTPStatus.SERVICE_UNAVAILABLE,
                               "Service Unavailable", 53000 + e.code,
                               "Error connecting to the backend storage")
     elif (isinstance(e, MongoDocumentException)):
         if (e.code == 0):
-            return error_response(http.client.INTERNAL_SERVER_ERROR,
+            return error_response(http.HTTPStatus.INTERNAL_SERVER_ERROR,
                                   "Internal Server Error", 52000,
                                   "Server can not currently process requests")
         else:
-            return error_response(http.client.UNPROCESSABLE_ENTITY,
+            return error_response(http.HTTPStatus.UNPROCESSABLE_ENTITY,
                                   "Cannot process Entity",
                                   52000 + e.code, str(e))
     elif (isinstance(e, AnnotationException)):
         if (e.code == 0):
-            return error_response(http.client.INTERNAL_SERVER_ERROR,
+            return error_response(http.HTTPStatus.INTERNAL_SERVER_ERROR,
                                   "Internal Server Error", 51000,
                                   "Server can not currently process requests")
         else:
-            return error_response(http.client.UNPROCESSABLE_ENTITY,
+            return error_response(http.HTTPStatus.UNPROCESSABLE_ENTITY,
                                   "Cannot process Entity", 51000 + e.code,
                                   str(e))
     elif (isinstance(e, StorageRestExceptions)):
         if (e.code == 2 or e.code == 3):
-            return error_response(http.client.NOT_FOUND, "Not Found",
+            return error_response(http.HTTPStatus.NOT_FOUND, "Not Found",
                                   50100 + e.code, str(e))
         else:
-            return error_response(http.client.UNPROCESSABLE_ENTITY,
+            return error_response(http.HTTPStatus.UNPROCESSABLE_ENTITY,
                                   "Cannot process entity", 50100 + e.code,
                                   str(e))
     elif (isinstance(e, BadRequest)):
         # Flask error
-        return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+        return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
     else:
         logger.logUnknownError("Annotation Storage REST Service Unknown Error",
                                str(e), 50000)
-        return error_response(http.client.INTERNAL_SERVER_ERROR,
+        return error_response(http.HTTPStatus.INTERNAL_SERVER_ERROR,
                               "Internal Server Error", "",
                               "Server can not currently process requests")
 
@@ -331,14 +331,14 @@ def simple_requests_handler(api_request):
 # ==============================================================================
 @APP.errorhandler(400)
 def internal_error400(error):
-    return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+    return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
 
 @APP.errorhandler(500)
 def internal_error500(error):
     logger.logUnknownError("Annotation Storage REST Service Unknown Critical"
                            " Error", str(error), 50000)
-    return error_response(http.client.INTERNAL_SERVER_ERROR,
+    return error_response(http.HTTPStatus.INTERNAL_SERVER_ERROR,
                           "Internal Server Error", "",
                           "Server can not currently process requests")
 
@@ -380,7 +380,7 @@ def createDocument():
             logger.logUnknownDebug("Create Document", "Id: {0}".format(docId))
             return jsonify({"id": docId}), 201
         else:
-            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
     except Exception as e:
         return _processCommonException(e)
@@ -486,7 +486,7 @@ def document(document_id):
             # exception
             return jsonify({}), 204
         else:
-            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
     except Exception as e:
         return _processCommonException(e)
@@ -512,7 +512,7 @@ def createAnnotationSchema():
             logger.logUnknownDebug("Create Schema", "Id: {0}".format(docId))
             return jsonify({"id": docId}), 201
         else:
-            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
     except Exception as e:
         return _processCommonException(e)
@@ -560,7 +560,7 @@ def annotationSchema(schema_id):
             # exception
             return jsonify({}), 204
         else:
-            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
     except Exception as e:
         return _processCommonException(e)
@@ -710,7 +710,7 @@ def documentAnnotationS(document_id):
 
         elif request.method == 'PUT':
             logger.logUnknownDebug("Update Annotations", " For document Id: {0}".format(document_id))
-            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
         elif request.method == 'POST':
             jsonBatch = request.json
@@ -759,7 +759,7 @@ def documentAnnotationS(document_id):
                                        str(nbAnnotationsDeleted), document_id))
             return jsonify({"nDeleted": nbAnnotationsDeleted}), 200
         else:
-            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
     except Exception as e:
         return _processCommonException(e)
@@ -816,7 +816,7 @@ def createDocumentAnnotation(document_id):
             docId = man.createAnnotation(request.json, document_id)
             return jsonify({"id": docId}), 201
         else:
-            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
     except Exception as e:
         return _processCommonException(e)
@@ -911,7 +911,7 @@ def documentAnnotation(document_id, annotation_id):
             # exception
             return jsonify({}), 204
         else:
-            return error_response(http.client.BAD_REQUEST, "Bad Request", "", "")
+            return error_response(http.HTTPStatus.BAD_REQUEST, "Bad Request", "", "")
 
     except Exception as e:
         return _processCommonException(e)

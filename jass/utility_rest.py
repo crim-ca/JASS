@@ -13,6 +13,7 @@ import sqlite3
 import os
 import datetime
 import logging
+import http.client
 
 # -- 3rd party ---------------------------------------------------------------
 from flask import request
@@ -111,7 +112,7 @@ def get_server_restart_time():
     conn = http.client.HTTPConnection(settings.GetConfigValue('Server', 'Name'))
     conn.request("GET", "/server-status")
     response = conn.getresponse()
-    if response.status == http.client.OK:
+    if response.status == http.HTTPStatus.OK:
         body = response.read()
         restart_time_match = re.search('<dt>Restart Time: [a-zA-Z]*, '
                                        '([^ ]* [0-9:]{8}) (.*)</dt>',
