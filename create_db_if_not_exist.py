@@ -32,13 +32,13 @@ def createDbIfNotExist(config_path):
     while (retryTimes < 3):
         try:
             retryTimes = retryTimes + 1
-            mongo_host = ""
             if "MONGO_HOST" in os.environ:
                 mongo_host = os.environ["MONGO_HOST"]
             else:
                 mongo_host = SETTINGS.get("ServiceStockageAnnotations", "MONGO_HOST")
 
-            MC = MongoClient(mongo_host, int(SETTINGS.get("ServiceStockageAnnotations", "MongoPort")))
+            MC = MongoClient(mongo_host, int(SETTINGS.get("ServiceStockageAnnotations", "MongoPort")),
+                             connect=False)
 
             dbName = SETTINGS.get("ServiceStockageAnnotations", "MongoDb")
             db = MC[(dbName)]
