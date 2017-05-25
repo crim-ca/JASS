@@ -45,7 +45,7 @@ def get_ignore_modules_config(rootModuleDirectory):
 
     # remove existing reserved modules
     for moduleName in ["os", "sys", "unittest", "random", "datetime", "optparse", "re", "collections", "logging",
-                       "configparser", "traceback", "httplib"]:
+                       "configparser", "traceback", "http.client"]:
         if moduleName in notProjectModuleNames:
             del notProjectModuleNames[moduleName]
 
