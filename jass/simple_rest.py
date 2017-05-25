@@ -84,22 +84,22 @@ from flask import render_template
 from flask import jsonify
 
 # Utility
-from .utility_rest import request_wants_json
-from .utility_rest import get_canarie_api_response
-from .utility_rest import error_response  # OK
+from utility_rest import request_wants_json
+from utility_rest import get_canarie_api_response
+from utility_rest import error_response  # OK
 
 # -- Project specific --------------------------------------------------------
-from . import settings
-from . import error
+import settings
+import error
 
 # -- Program Classes --------------------------------------------------------
-from .storage_exception import *
-from .document_manager import DocumentManager
-from .storage_manager import StorageManager
-from .annotations_manager import AnnotationManager
-from . import custom_logger as logger
+from storage_exception import *
+from document_manager import DocumentManager
+from storage_manager import StorageManager
+from annotations_manager import AnnotationManager
+import custom_logger as logger
 from werkzeug.exceptions import BadRequest
-from .reverse_proxied import ReverseProxied
+from reverse_proxied import ReverseProxied
 
 # -- Configuration -----------------------------------------------------------
 

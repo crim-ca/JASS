@@ -28,8 +28,8 @@ import pytz
 
 
 # -- Project specific --------------------------------------------------------
-from . import settings
-from . import error
+import settings
+import error
 
 
 class UnknownServiceError(Exception):

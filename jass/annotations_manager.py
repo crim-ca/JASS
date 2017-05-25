@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # coding:utf-8
 
-from . import mongo_utils
-from . import settings
-from . import custom_logger as logger
-from .storage_exception import *
+import mongo_utils
+import settings
+import custom_logger as logger
+from storage_exception import *
 from bson.errors import *
-from .storage_manager import StorageManager
+from storage_manager import StorageManager
 from bson.objectid import ObjectId
 import gridfs
 import json
