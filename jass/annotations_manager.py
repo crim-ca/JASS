@@ -227,7 +227,7 @@ class AnnotationManager(StorageManager):
                         #Add id
                         anno["id"] = str(ObjectId())
                         
-                    jsonDump = json.dumps(batchData)
+                    jsonDump = json.dumps(batchData).encode("UTF-8")
                     annoFileID = fs.put(jsonDump)
                     nbInserted = len(batchData)
                     if 'common' in jsonBatch:
