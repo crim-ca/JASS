@@ -19,10 +19,17 @@ class TestStorageManager(unittest.TestCase):
         settings.Settings.Instance().LoadConfig(
             os.path.join(os.path.dirname(__file__), "..", "..", "configs", "test", "config.ini"))
 
-        c = MongoClient(settings.GetConfigValue("ServiceStockageAnnotations", "MONGO_HOST"),
-                        int(settings.GetConfigValue("ServiceStockageAnnotations", "MongoPort")),
-                        connect=False)
-        c.drop_database(settings.GetConfigValue("ServiceStockageAnnotations", "MongoDb"))
+        host = settings.GetConfigValue("ServiceStockageAnnotations", "MONGO_HOST")
+        port = int(settings.GetConfigValue("ServiceStockageAnnotations", "MongoPort"))
+        c = MongoClient(host, port, connect=False)
+        c.admin.command("ismaster")
+        dbname = settings.GetConfigValue("ServiceStockageAnnotations", "MongoDb")
+
+        # Force connection test
+        # https://api.mongodb.com/python/current/migrate-to-pymongo3.html#mongoclient-connects-asynchronously
+        c.admin.command("ismaster")
+
+        c.drop_database(dbname)
         c.close()
         self.d = StorageManager()
         self.d.setCollection(settings.GetConfigValue("ServiceStockageAnnotations", "documentCollection"))

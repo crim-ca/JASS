@@ -29,10 +29,8 @@ class StorageManager:
         Connects to MongoDB and verifies connection.
         """
         try:
-            host = settings.GetConfigValue("ServiceStockageAnnotations",
-                                           "MONGO_HOST")
-            port = int(settings.GetConfigValue("ServiceStockageAnnotations",
-                                               "MongoPort"))
+            host = settings.GetConfigValue("ServiceStockageAnnotations", "MONGO_HOST")
+            port = int(settings.GetConfigValue("ServiceStockageAnnotations", "MongoPort"))
             self.client = MongoClient(host, port, connect=False)
             db = settings.GetConfigValue("ServiceStockageAnnotations",
                                          "MongoDb")
