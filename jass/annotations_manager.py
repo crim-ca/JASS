@@ -9,7 +9,7 @@ from bson.errors import *
 from storage_manager import StorageManager
 from bson.objectid import ObjectId
 import gridfs
-import simplejson
+import json
 
 # MongoDB: some interesting performance statistics
 # http://blog.mongolab.com/2014/01/how-big-is-your-mongodb/
@@ -227,7 +227,7 @@ class AnnotationManager(StorageManager):
                         #Add id
                         anno["id"] = str(ObjectId())
                         
-                    jsonDump = simplejson.dumps(batchData)
+                    jsonDump = json.dumps(batchData).encode("UTF-8")
                     annoFileID = fs.put(jsonDump)
                     nbInserted = len(batchData)
                     if 'common' in jsonBatch:
@@ -239,18 +239,18 @@ class AnnotationManager(StorageManager):
                     batchDoc['file_fs_id_batch'] = annoFileID
                     try:
                         batch_id = coll.insert(batchDoc)
-                    except Exception,e:
+                    except Exception as e:
                         #clean up file info so we dont have garbage in our db
                         logger.logUnknownError("Annotation Storage Create Annotations","", e)
                         fs.delete(annoFileID)
                         raise MongoDocumentException(0)
                     
                     return nbInserted
-            except AnnotationException, e:
+            except AnnotationException as e:
                 logger.logError(e)
                 raise e
 
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Create Annotations",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -324,7 +324,7 @@ class AnnotationManager(StorageManager):
                 fs = gridfs.GridFS(db)
                 annotations = {}
                 if(fs.exists(batch["file_fs_id_batch"])):
-                    annotations = simplejson.loads(fs.get(batch["file_fs_id_batch"]).read())
+                    annotations = json.loads(fs.get(batch["file_fs_id_batch"]).read())
                 arr += annotations    
     
         return {"data": arr}
@@ -351,7 +351,7 @@ class AnnotationManager(StorageManager):
         # This will change later on.
         count = 0
         self.__setDocIdToJsonSelect(documentIds,jsonSelect)
-        print jsonSelect
+        # print jsonSelect
         if (storageType == AnnotationManager.HUMAN_STORAGE or 
             storageType == AnnotationManager.ALL_STORAGE):
             count += self.deleteMongoDocumentS(jsonSelect,
@@ -361,7 +361,7 @@ class AnnotationManager(StorageManager):
             #find all batches, delete batch content, then delete batch.
             batchDocs = self.getMongoDocumentS(jsonSelect,
                                    self.storageCollections[AnnotationManager.BATCH_STORAGE])
-            print jsonSelect
+            # print jsonSelect
             db = self.client[self.mongoDb]
             fs = gridfs.GridFS(db)
             #delete all the files
@@ -370,7 +370,7 @@ class AnnotationManager(StorageManager):
                     annoFileID = batch["file_fs_id_batch"]
                     if(fs.exists(annoFileID)):
                         fs.delete(annoFileID)
-                except Exception,e:
+                except Exception as e:
                     #clean up file info so we dont have garbage in our db
                     logger.logUnknownError("Annotation Storage Delete Annotations","", e)
             #delete all the batches
@@ -396,7 +396,7 @@ class AnnotationManager(StorageManager):
         
         try:
             jsonSelect["doc_id"] = {"$in": docs}
-        except Exception, e:
+        except Exception as e:
             logger.logUnknownError("Annotation Storage Get Doc Id", "Failed Delete Query", e)
 
     # ~ Private

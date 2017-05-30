@@ -7,8 +7,7 @@ General settings for the REST API
 
 # --Standard lib module---------------------------------------
 import os
-import ConfigParser
-
+import configparser
 
 # --Project specific------------------------------------------
 import singleton
@@ -16,6 +15,7 @@ import custom_logger as logger
 from generic_exception import GenericException
 from singleton import Singleton
 import os
+
 
 class SettingsExceptions(GenericException):
     """
@@ -40,8 +40,8 @@ class Settings(Singleton):
     def __init__(self):
         self.__config = None
         self.__config_path = None
-        
-    def LoadConfig(self,config_path):
+
+    def LoadConfig(self, config_path):
         """
         Set the config path and loads configuration
         @param config_path: Set the config path and loads the configuration
@@ -59,11 +59,11 @@ class Settings(Singleton):
         """
         return self.__config.get(namespace, key)
 
-    def __load_settings(self,config_path):
+    def __load_settings(self, config_path):
         """
         load setting specified by config path
         """
-        
+
         self.__config = None
 
         if not os.path.exists(config_path):
@@ -71,7 +71,7 @@ class Settings(Singleton):
             logger.logError(exc)
             raise exc
 
-        self.__config = ConfigParser.SafeConfigParser()
+        self.__config = configparser.ConfigParser()
         self.__config.read(config_path)
 
 

@@ -52,7 +52,7 @@ class GenericException(Exception):
                           " params: {1}".\
                           format(code, ', '.join([str(x) for x in args]))
         self.msg = message
-        super(GenericException, self).__init__(self)
+        super().__init__()
 
     # http://stackoverflow.com/questions/1272138/baseexception-message-deprecated-in-python-2-6
     def __str__(self):

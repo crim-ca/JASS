@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding:utf-8
 
-import httplib
+import http.client
 import settings
-import ConfigParser
+import configparser
 
 
 class Error:
@@ -29,29 +29,29 @@ class Error:
 
         # Dict mapping error codes to an html status code and a msg id tuple
         self.__error_code_dict[self.NO_ERROR] = \
-            (httplib.OK, 'NO_ERROR')
+            (http.HTTPStatus.OK, 'NO_ERROR')
         self.__error_code_dict[self.UNKNOWN] = \
-            (httplib.INTERNAL_SERVER_ERROR, 'UNKNOWN')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'UNKNOWN')
         self.__error_code_dict[self.NOT_INITIALIZED] = \
-            (httplib.INTERNAL_SERVER_ERROR, 'NOT_INITIALIZED')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'NOT_INITIALIZED')
         self.__error_code_dict[self.URL_NOT_VALID] = \
-            (httplib.BAD_REQUEST, 'URL_NOT_VALID')
+            (http.HTTPStatus.BAD_REQUEST, 'URL_NOT_VALID')
         self.__error_code_dict[self.FILE_NOT_FOUND] = \
-            (httplib.NOT_FOUND, 'FILE_NOT_FOUND')
+            (http.HTTPStatus.NOT_FOUND, 'FILE_NOT_FOUND')
         self.__error_code_dict[self.DB_WRITING_ERROR] = \
-            (httplib.INTERNAL_SERVER_ERROR, 'DB_WRITING_ERROR')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'DB_WRITING_ERROR')
         self.__error_code_dict[self.DB_READING_ERROR] = \
-            (httplib.INTERNAL_SERVER_ERROR, 'DB_READING_ERROR')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'DB_READING_ERROR')
         self.__error_code_dict[self.BAD_SERVICE_CONFIGURATION] = \
-            (httplib.INTERNAL_SERVER_ERROR, 'BAD_SERVICE_CONFIGURATION')
+            (http.HTTPStatus.INTERNAL_SERVER_ERROR, 'BAD_SERVICE_CONFIGURATION')
         self.__error_code_dict[self.SERVICE_NOT_FOUND] = \
-            (httplib.BAD_REQUEST, 'SERVICE_NOT_FOUND')
+            (http.HTTPStatus.BAD_REQUEST, 'SERVICE_NOT_FOUND')
         self.__error_code_dict[self.UNKNOWN_UUID] = \
-            (httplib.BAD_REQUEST, 'UNKNOWN_UUID')
+            (http.HTTPStatus.BAD_REQUEST, 'UNKNOWN_UUID')
         self.__error_code_dict[self.ANNOTATION_SOURCE_NOT_VALID] = \
-            (httplib.BAD_REQUEST, 'ANNOTATION_SOURCE_NOT_VALID')
+            (http.HTTPStatus.BAD_REQUEST, 'ANNOTATION_SOURCE_NOT_VALID')
         self.__error_code_dict[self.MISSING_PARAMETER] = \
-            (httplib.BAD_REQUEST, 'MISSING_PARAMETER')
+            (http.HTTPStatus.BAD_REQUEST, 'MISSING_PARAMETER')
 
     def is_ok(self):
         return self.error_code == self.NO_ERROR
@@ -69,7 +69,7 @@ class Error:
 
     @staticmethod
     def get_html_status_msg_from_status(status):
-        return httplib.responses[status]
+        return http.client.responses[status]
 
     def get_html_status_msg(self):
         return Error.get_html_status_msg_from_status(self.get_html_status())
@@ -82,7 +82,7 @@ class Error:
                                               msg_id)
                 msg = msg.format(**self.__details)
                 return msg
-            except ConfigParser.Error:
+            except configparser.Error:
                 pass
 
         return settings.GetConfigValue('canarie_status_msg', msg_id)

@@ -16,8 +16,6 @@ The license for python dependencies
 :docutils: 2-Clause BSD. (http://opensource.org/licenses/BSD-2-Clause). https://pypi.python.org/pypi/docutils
 :itsdangerous: BSD. https://pypi.python.org/pypi/itsdangerous
 :pytz: MIT. https://pypi.python.org/pypi/pytz
-:simplejson: MIT. https://pypi.python.org/pypi/simplejson
-:wsgiref: Python Software Foundation License. https://pypi.python.org/pypi/wsgiref
 
 ################
 For applications

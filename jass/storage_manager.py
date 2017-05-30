@@ -1,4 +1,5 @@
 import pymongo
+import pymongo.errors
 from pymongo import MongoClient
 import mongo_utils
 import settings
@@ -28,21 +29,24 @@ class StorageManager:
         Connects to MongoDB and verifies connection.
         """
         try:
-            host = settings.GetConfigValue("ServiceStockageAnnotations",
-                                           "MONGO_HOST")
-            port = int(settings.GetConfigValue("ServiceStockageAnnotations",
-                                               "MongoPort"))
-            self.client = MongoClient(host, port)
+            host = settings.GetConfigValue("ServiceStockageAnnotations", "MONGO_HOST")
+            port = int(settings.GetConfigValue("ServiceStockageAnnotations", "MongoPort"))
+            self.client = MongoClient(host, port, connect=False)
             db = settings.GetConfigValue("ServiceStockageAnnotations",
                                          "MongoDb")
             self.mongoDb = db
+
+            # Force connection test
+            # https://api.mongodb.com/python/current/migrate-to-pymongo3.html#mongoclient-connects-asynchronously
+            self.client.admin.command("ismaster")
+
             self.m_connected = True
             return True
 
-        except pymongo.errors.ConnectionFailure, e:
+        except pymongo.errors.ConnectionFailure:
             logger.logError(StorageException(1))
 
-        except Exception, e:
+        except Exception as e:
             logger.logUnknownError("Annotation Storage Create Document",
                                    "", e)
             self.m_connected = False
@@ -80,11 +84,11 @@ class StorageManager:
 
          :return _id: The ID of the created document
         """
-        if not (collection):
+        if not collection:
             collection = self.mongoCollection
 
-        if(self.isConnected()):
-            if(jsonDoc is None):
+        if self.isConnected():
+            if jsonDoc is None:
                 raise MongoDocumentException(2)
             # We don't want the client to specify an id.
             if '_id' in jsonDoc:
@@ -94,7 +98,7 @@ class StorageManager:
                 coll = db[collection]
                 doc_id = coll.insert(jsonDoc)
                 return str(doc_id)
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Create Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -109,9 +113,9 @@ class StorageManager:
         :Preconditions (Otherwise exception is thrown):
             * isConnected must be true,
 
-        :param documentId: Document ID
+        :param strDocId: Document ID
         
-        :return : If the document is found returns a simplejson object of the
+        :return : If the document is found returns a json object of the
                   document, otherwise returns None
 
             Document content returned (mandatory). Other user fields may be present:
@@ -122,19 +126,19 @@ class StorageManager:
                     @context: context describing the format of the document
                 }
         """
-        if not (collection):
+        if not collection:
             collection = self.mongoCollection
 
-        if(self.isConnected()):
+        if self.isConnected():
             try:
                 db = self.client[self.mongoDb]
                 coll = db[collection]
                 doc = coll.find_one({"_id": ObjectId(strDocId)})
                 mongo_utils.changeDocIdToString(doc)
                 return doc
-            except InvalidId, e:
+            except InvalidId:
                 return None
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Get Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -164,16 +168,16 @@ class StorageManager:
                       }
         """
 
-        if not (collection):
+        if not collection:
             collection = self.mongoCollection
 
-        if(self.isConnected()):
-            if(jsonDoc is None):
+        if self.isConnected():
+            if jsonDoc is None:
                 raise MongoDocumentException(2)
 
             if '_id' in jsonDoc:
                 doWithId = self.getMongoDocument(jsonDoc['_id'])
-                if(doWithId is None):
+                if doWithId is None:
                     # ID cannot be found
                     logger.logInfo(MongoDocumentException(5, jsonDoc['_id']))
                     raise MongoDocumentException(5, jsonDoc['_id'])
@@ -189,7 +193,7 @@ class StorageManager:
                 coll = db[collection]
                 doc_id = coll.save(jsonDoc)
                 return str(doc_id)
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Update Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -206,7 +210,7 @@ class StorageManager:
         :returns: 0 if no elements were deleted, 1 if one was deleted.
         """
 
-        if(not mongo_utils.isObjectId(strDocId)):
+        if not mongo_utils.isObjectId(strDocId):
             return 0
 
         return self.deleteMongoDocumentS({"_id": ObjectId(strDocId)},
@@ -225,18 +229,18 @@ class StorageManager:
         :@return the number of deleted documents
         """
 
-        if not (collection):
+        if not collection:
             collection = self.mongoCollection
 
-        if(self.isConnected()):
+        if self.isConnected():
             try:
                 db = self.client[self.mongoDb]
                 coll = db[collection]
                 res = coll.find(jsonQuery)
                 return res
-            except StorageException, e:
+            except StorageException as e:
                 raise e
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Get Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -259,7 +263,7 @@ class StorageManager:
         if not (collection):
             collection = self.mongoCollection
 
-        if(self.isConnected()):
+        if self.isConnected():
             try:
                 db = self.client[self.mongoDb]
                 coll = db[collection]
@@ -268,9 +272,9 @@ class StorageManager:
                     raise StorageException(2)
                 else:
                     return res['n']
-            except StorageException, e:
+            except StorageException as e:
                 raise e
-            except Exception, e:
+            except Exception as e:
                 logger.logUnknownError("Annotation Storage Delete Document",
                                        "", e)
                 raise MongoDocumentException(0)
@@ -279,7 +283,7 @@ class StorageManager:
             raise StorageException(1)
 
     def disconnect(self):
-        if(self.isConnected()):
+        if self.isConnected():
             try:
                 self.client.close()
                 self.m_connected = False
