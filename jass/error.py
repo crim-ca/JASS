@@ -2,7 +2,7 @@
 # coding:utf-8
 
 import http.client
-import settings
+import jass.settings as settings
 import configparser
 
 

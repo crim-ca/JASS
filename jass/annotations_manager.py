@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # coding:utf-8
 
-import mongo_utils
-import settings
-import custom_logger as logger
-from storage_exception import *
+import jass.mongo_utils as mongo_utils
+import jass.settings as settings
+import jass.custom_logger as logger
+from jass.storage_exception import *
 from bson.errors import *
-from storage_manager import StorageManager
+from jass.storage_manager import StorageManager
 from bson.objectid import ObjectId
 import gridfs
 import json

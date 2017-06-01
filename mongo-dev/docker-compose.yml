@@ -2,7 +2,7 @@ version: "2"
 
 services:
   jass_mongo_dev:
-    image: tutum/mongodb
+    build: ../mongo_image
     ports:
       - "27017:27017"
       - "28017:27017"
@@ -13,7 +13,7 @@ services:
 
 
   jass_mongo_test:
-    image: tutum/mongodb
+    build: ../mongo_image
     ports:
       - "27019:27017"
     environment:

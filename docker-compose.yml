@@ -13,7 +13,7 @@ services:
      - mongo
 
   mongo:
-    image: tutum/mongodb
+    build: mongo_image
     expose:
       - 27017
       - 28017

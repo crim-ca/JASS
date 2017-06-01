@@ -29,8 +29,8 @@ import pytz
 
 
 # -- Project specific --------------------------------------------------------
-import settings
-import error
+import jass.settings as settings
+import jass.error as error
 
 
 class UnknownServiceError(Exception):

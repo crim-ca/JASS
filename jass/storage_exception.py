@@ -1,4 +1,4 @@
-from generic_exception import GenericException
+from jass.generic_exception import GenericException
 
 
 class MongoDocumentException(GenericException):

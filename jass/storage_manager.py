@@ -1,10 +1,10 @@
 import pymongo
 import pymongo.errors
 from pymongo import MongoClient
-import mongo_utils
-import settings
-import custom_logger as logger
-from storage_exception import *
+import jass.mongo_utils as mongo_utils
+import jass.settings as settings
+import jass.custom_logger as logger
+from jass.storage_exception import *
 from bson.objectid import ObjectId
 from bson.errors import *
 

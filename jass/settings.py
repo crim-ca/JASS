@@ -10,10 +10,10 @@ import os
 import configparser
 
 # --Project specific------------------------------------------
-import singleton
-import custom_logger as logger
-from generic_exception import GenericException
-from singleton import Singleton
+import jass.singleton as singleton
+import jass.custom_logger as logger
+from jass.generic_exception import GenericException
+from jass.singleton import Singleton
 import os
 
 

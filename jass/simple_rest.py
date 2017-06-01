@@ -84,22 +84,23 @@ from flask import render_template
 from flask import jsonify
 
 # Utility
-from utility_rest import request_wants_json
-from utility_rest import get_canarie_api_response
-from utility_rest import error_response  # OK
+from jass.utility_rest import request_wants_json
+from jass.utility_rest import get_canarie_api_response
+from jass.utility_rest import error_response  # OK
 
 # -- Project specific --------------------------------------------------------
-import settings
-import error
+import jass.settings
+import jass.error
 
 # -- Program Classes --------------------------------------------------------
-from storage_exception import *
-from document_manager import DocumentManager
-from storage_manager import StorageManager
-from annotations_manager import AnnotationManager
-import custom_logger as logger
+from jass.storage_exception import *
+from jass.document_manager import DocumentManager
+from jass.storage_manager import StorageManager
+from jass.annotations_manager import AnnotationManager
+import jass.custom_logger as logger
 from werkzeug.exceptions import BadRequest
-from reverse_proxied import ReverseProxied
+from jass.reverse_proxied import ReverseProxied
+import jass.settings as settings
 
 # -- Configuration -----------------------------------------------------------
 
@@ -111,7 +112,7 @@ APP = Flask(__name__,
             template_folder=TEMPLATE_PATH)
 
 
-# -- Accessibility -----------------------------------------------------------
+# -- Accessibility ---------------------------------------------------------    --
 # All the accessibility functions will be defined here
 
 # ============================================================
