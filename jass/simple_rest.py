@@ -767,6 +767,34 @@ def documentAnnotationS(document_id):
         man.disconnect()
 
 
+@APP.route('/annotations/search', methods=['POST'])
+def search_annotations():
+    """
+    Search manual annotations (storageType 1)
+    The body of the request is a JSON query passed to https://docs.mongodb.com/manual/reference/method/db.collection.find/
+
+    :return: JSON array of the annotations matching the query
+    """
+    man = AnnotationManager()
+
+    try:
+        hac = settings.GetConfigValue("ServiceStockageAnnotations",
+                                      "HumanAnnotationCollection")
+        man.addStorageCollection(AnnotationManager.HUMAN_STORAGE, hac)
+        bac = settings.GetConfigValue("ServiceStockageAnnotations",
+                                      "BatchAnnotationCollection")
+        man.addStorageCollection(AnnotationManager.BATCH_STORAGE, bac)
+        man.connect()
+
+        query = request.json
+        result = man.getAnnotationS(None, query, AnnotationManager.BASIC_BATCH_FORMAT, AnnotationManager.HUMAN_STORAGE)
+
+        return jsonify(result['data'])
+    except Exception as e:
+        return _processCommonException(e)
+    finally:
+        man.disconnect()
+
 # TODO Update
 @APP.route('/document/<document_id>/annotation', methods=['POST'])
 def createDocumentAnnotation(document_id):

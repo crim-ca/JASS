@@ -279,6 +279,24 @@ class AnnotationManager(StorageManager):
         return self.createAnnotationS(jsonBatch, strDocId, batchFormat, 
                                       AnnotationManager.BATCH_STORAGE)
 
+    def search_annotations(self, query: str):
+        """
+
+        :param query:
+        :return:
+        """
+        if "doc_id" not in query:
+            return []
+
+        cursor = self.getMongoDocumentS(query, self.storageCollections[AnnotationManager.HUMAN_STORAGE])
+
+        for annotation in cursor:
+            annotation["id"] = str(annotation['_id'])
+            del annotation["_id"]
+            arr.append(annotation)
+
+        annotions = ???
+
     def getAnnotationS(self,
                        documentIds,
                        jsonSelect={},
@@ -297,7 +315,7 @@ class AnnotationManager(StorageManager):
 
         :@return: Documents found. Return format is described by batchFormat.
         """
-        if not (self.__validateDocumentIds(documentIds)):
+        if "doc_id" not in jsonSelect and ((documentIds is None) or (not (self.__validateDocumentIds(documentIds)))):
             return {"data": []}
 
         # This will change later on.
@@ -384,6 +402,7 @@ class AnnotationManager(StorageManager):
         """
         set a filter by doc id  
         """
+
         if "doc_id" in jsonSelect:
             del jsonSelect["doc_id"]
             

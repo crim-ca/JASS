@@ -4,7 +4,7 @@ Installation
 Installation instructions for CentOS 6.6+
 
 **External Requirements** :
-   MongoDB 2.6
+   MongoDB 3.4
 
 Installing JASS via docker compose
 ==================================
@@ -27,10 +27,10 @@ To see enviroment variables used by both JASS and MongoDB refer to .env file.
 
 **MongoDB**
 Refert to the section: jass_mongo in docker-compose.
-***Important*** JASS was tested with MongoDB 2.6
+***Important*** JASS was tested with MongoDB 3.4
 
 Installing JASS standalone
 ==========================
 External Requirements** :
-   MongoDB 2.6
+   MongoDB 3.4
 
