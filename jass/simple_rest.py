@@ -14,7 +14,7 @@ There are several common concepts shared used in annotations, which we should de
     |        **storageType**: Describe with which annotation storage we are
     |                         interacting. Multiple storages are required
     |                         Depending on the access of annotations.
-    |                Values: 
+    |                Values:
     |                        **0**: All storage types
     |                        **1**: Human Storage : Storage used for small amount
     |                                           of annotations made by humans.
@@ -28,13 +28,13 @@ There are several common concepts shared used in annotations, which we should de
     |                                           but can only operate on groups of annotations
     |                                           on fields defined in common fields).
     |                                           If no common field supplied.
-    |                                           
+    |
     |
     |        **batchFormat**: Describe the format in which multiple annotations
     |                         should be send to the system. This also includes
     |                         how multiple annotations should be extracted from
     |                         the system.
-    |                Values: 
+    |                Values:
     |                        **0**: {"data" : [{annotation1}...{annotationN}]}
     |                            Where: annotation1 is the same format as if
     |                            you would request 1 annotation
@@ -79,7 +79,7 @@ import http.client
 
 # -- 3rd party ---------------------------------------------------------------
 from flask import Flask
-from flask import request, current_app
+from flask import request
 from flask import render_template
 from flask import jsonify
 
@@ -354,19 +354,19 @@ def createDocument():
     :route: **/document**
 
     :POST creates a new document:
-        :Request: 
-        
+        :Request:
+
             ::
-            
+
                 Preconditions: Here are the minimum required elements by the document.
                 {
                     @context: context describing the format of the document
                 }
-            
+
             All the other parameters will be saved as is.
             Erases "_id", "id" fields if they exists.
         :Response: Same as in, plus creates a field "id" to identify the document
-                
+
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
@@ -415,10 +415,10 @@ def document(document_id):
 
     :GET returns a document:
         :Response  JSON:
-        
+
             Here are minimum document contents:
             ::
-                
+
                 {
                   id:                    Id of the document = document_id
                   @context:              Complex object containing JSON_LD
@@ -426,26 +426,26 @@ def document(document_id):
                 }
 
             Other custom fields which were created would be returned too.
-                
+
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
     :PUT updates a document by replacing whole document contents:
         :Request:
-        
+
             The document must exists and contains the following contents at minimum:
             ::
-            
+
                  {
                      id:                    Id of the document = document_id
                      @context:              Complex object containing JSON_LD
                                             info.
                  }
-            
+
             Other custom fields which were created would be saved too.
             Erases "_id" field.
-            
+
         :Response:
             :http status code:
                 |    OK: 200
@@ -453,7 +453,7 @@ def document(document_id):
 
     :DELETE deletes the document. If the document not found do nothing.:
         :Response JSON: {}
-                   
+
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
@@ -575,98 +575,98 @@ def documentAnnotationS(document_id):
     """
     :route: **/document/<document_id>/annotations**
 
-    In case storageType = 2, annotations will be stored in batches. All operations impact 
+    In case storageType = 2, annotations will be stored in batches. All operations impact
     each batch (Example a PUT operation will replace all annotations in a batch).
     By default each document have 1 annotation batch. To have multiple batches,
     post/put batch of annotations using batchFormat = 1, and use common section to
     to identify uniquely a batch. Fields "doc_id_batch", "file_fs_id_batch" are reserved,
-    thus will be ignored if added in common section. 
+    thus will be ignored if added in common section.
 
     :param document_id: The id of the document from which we want to access
                         multiple annotations
 
-    :POST Create annotations in batch.: 
+    :POST Create annotations in batch.:
         :Request:
- 
+
             :preconditions:
-            
+
                All must be valid annotations.
                If one annotation fails, it will return an error message and
-               fail all create. 
+               fail all create.
             :params supported:
-            
+
                 |   batchFormat = 0,1
                 |   storageType = 1,2
             :params default:
-            
+
                 |   batchFormat = 1
                 |   storageType = 1
         :Response json:
-        
+
             |    returns {"nInserted":nbAnnotationsInserted}
-            
+
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
-    :PUT Updates annotations related for the document.: 
+    :PUT Updates annotations related for the document.:
         :Request:
-    
-            When we update we replace old contents with new ones. jsonSelect 
-            
+
+            When we update we replace old contents with new ones. jsonSelect
+
             :params supported:
                 |    jsonSelect (only contains contents in the "common" fields for storageType = 2.)
                 |    storageType = 2
-            
+
             :params default:
-            
-                |    storageType = 2 
+
+                |    storageType = 2
                 |    jsonSelect = {}
         :Response json:
             |    Returns number of annotations deleted
             |    {"nDeleted":nbAnnotationsDeleted}
-            
+
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
     :DELETE Deletes annotations related for the document.:
         :Request:
-        
+
             :params supported:
-            
+
                 |    jsonSelect
                 |    storageType = 1,2
             :params default:
-            
+
                 |    storageType = 1
                 |    jsonSelect = {}
         :Response json:
             |    Returns number of annotations deleted
             |    {"nDeleted":nbAnnotationsDeleted}
-            
+
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
 
     :GET Returns annotations for the current document.:
         :Request:
-        
+
             :params supported:
-            
+
                 |    jsonSelect
                 |    storageType = 0,1,2
                 |    batchFormat = 0
-                
+
             :params default:
                 |    batchFormat = 0
                 |    storageType = 0
                 |    jsonSelect = {}
         :Response json:
-        
+
             An array of annotations check batch format for how they will be
             formatted.
-            
+
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
@@ -768,40 +768,71 @@ def documentAnnotationS(document_id):
         man.disconnect()
 
 
+@APP.route('/annotations/search', methods=['POST'])
+def search_annotations():
+    """
+    Search manual annotations (storageType 1)
+    The body of the request is a JSON query passed to https://docs.mongodb.com/manual/reference/method/db.collection.find/
+    Will not search if there is no 'doc_id' filter.
+
+    :return: JSON array of the annotations matching the query
+    """
+    man = AnnotationManager()
+
+    try:
+        hac = settings.GetConfigValue("ServiceStockageAnnotations", "HumanAnnotationCollection")
+        man.addStorageCollection(AnnotationManager.HUMAN_STORAGE, hac)
+        man.connect()
+
+        query = request.json
+        if query is None:
+            return json.dumps({"error": "body with query is mandatory"}), 400
+
+        if "doc_id" not in query:
+            return json.dumps({"error": "doc_id in query is mandatory"}), 400
+
+        result = man.search_annotations(query)
+
+        return jsonify(result)
+    except Exception as e:
+        return _processCommonException(e)
+    finally:
+        man.disconnect()
+
 # TODO Update
 @APP.route('/document/<document_id>/annotation', methods=['POST'])
 def createDocumentAnnotation(document_id):
     """
     :route: **/document/<document_id>/annotation**
-    
+
     :param document_id: The id of the document for which we want to access the annotation
 
     :POST Creates an annotation.:
         :Request:
             :preconditions:
-            
+
                 Here are minimum annotations contents:
                 ::
-                
+
                     {
                       @context: Complex object containing JSON_LD info.
                     }
-                    
+
                 Other custom fields which were created would be returned too.
-            
+
             The annotation using this method is created in HumanStorage.
         :Response JSON:
-        
+
             Here are minimum annotations contents which will be after creation:
             ::
-            
+
                  {
                     doc_id: to describe the id of the document containing the
                             annotation. Equals to strDocId.
                     @context: a field linking the context of the document.
                     id:  a unique id identifying the annotation.
                  }
-                 
+
             :http status code:
                 |    OK: 200
                 |    Error: See Error Codes
@@ -840,15 +871,15 @@ def documentAnnotation(document_id, annotation_id):
     :GET Returns an annotation:
         :Request:
              :precondtions:
-             
+
                  Can only get annotations from HumanStorage.
-                 
+
         :Response json:
-            
+
             Here are minimum annotations contents which will be after
             creation:
             ::
-            
+
                 {
                     doc_id: to describe the id of the document containing the
                             annotation. Equals to strDocId.
@@ -858,7 +889,7 @@ def documentAnnotation(document_id, annotation_id):
 
     :PUT Updates an annotation:
         Updates are made by changing the content of the old annotation with the new one
-        
+
         :Request:
             :precondtions:
                 Can only get annotations from HumanStorage.
@@ -871,7 +902,7 @@ def documentAnnotation(document_id, annotation_id):
         :Request:
              :precondtions:
                  Can only get annotations from HumanStorage.
-                 
+
         :Response:
             :http status code:
                 |    OK: 204
