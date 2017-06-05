@@ -773,9 +773,8 @@ def search_annotations():
     """
     Search manual annotations (storageType 1)
     The body of the request is a JSON query passed to https://docs.mongodb.com/manual/reference/method/db.collection.find/
-    Will not search if there is no 'doc_id' filter.
 
-    :return: JSON array of the annotations matching the query
+    :return: JSON array of the annotations matching the query, sorted descending by score.
     """
     man = AnnotationManager()
 
@@ -787,9 +786,6 @@ def search_annotations():
         query = request.json
         if query is None:
             return json.dumps({"error": "body with query is mandatory"}), 400
-
-        if "doc_id" not in query:
-            return json.dumps({"error": "doc_id in query is mandatory"}), 400
 
         result = man.search_annotations(query)
 

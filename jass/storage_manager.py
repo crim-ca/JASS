@@ -218,7 +218,7 @@ class StorageManager:
 
     # Note this method should be considered protected
 
-    def getMongoDocumentS(self, jsonQuery, collection=None):
+    def getMongoDocumentS(self, jsonQuery, collection=None, **kwargs):
         """
         Search a collection for documents.
 
@@ -236,7 +236,10 @@ class StorageManager:
             try:
                 db = self.client[self.mongoDb]
                 coll = db[collection]
-                res = coll.find(jsonQuery)
+                if kwargs is None:
+                    res = coll.find(jsonQuery)
+                else:
+                    res = coll.find(jsonQuery, **kwargs)
                 return res
             except StorageException as e:
                 raise e

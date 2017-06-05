@@ -285,11 +285,13 @@ class AnnotationManager(StorageManager):
         The body of the request is a JSON query passed to MongoDb collection find method.
         https://docs.mongodb.com/manual/reference/method/db.collection.find/
 
-        :return: Array of the annotations matching the query
         :param query: JSON query passed to MongoDb find
-        :return:
+        :return: Array of the annotations matching the query, sorted descending by score.
         """
-        cursor = self.getMongoDocumentS(query, self.storageCollections[AnnotationManager.HUMAN_STORAGE])
+        text_score = {"score:": {"$meta": "textScore"}}
+        cursor = self.getMongoDocumentS(query, self.storageCollections[AnnotationManager.HUMAN_STORAGE],
+                                        projection=text_score,
+                                        sort=list(text_score.items()))
 
         annotations = []
         for annotation in cursor:
