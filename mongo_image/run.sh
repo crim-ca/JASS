@@ -5,8 +5,10 @@ if [ -n "$MONGODB_DATABASE" ] && [ -n "$MONGODB_USER" ] && [ -n "$MONGODB_PASS" 
         OUTPUT=$(echo -e "use $MONGODB_DATABASE\ndb.getUser('$MONGODB_USER')" | mongo)
         if [[ $OUTPUT == *"null"* ]]; then
                 # User not there create it
-                echo "Created user $MONGODB_USER for db $MONGODB_DATABASE"
+                echo "Create user $MONGODB_USER for db $MONGODB_DATABASE"
                 echo -e "use $MONGODB_DATABASE\ndb.createUser({ user: '$MONGODB_USER', pwd: '$MONGODB_PASS', roles: [ { role: 'dbOwner', db: '$MONGODB_DATABASE' } ] });" | mongo
+                echo "Create text index for annotations"
+                echo -e "use $MONGODB_DATABASE\ndb.humanAnno.createIndex({ text: 'text'});" | mongo
         else
                 # User already here do nothing
                 echo "User $MONGODB_USER already exists for db $MONGODB_DATABASE"
