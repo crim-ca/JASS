@@ -774,7 +774,7 @@ def search_annotations():
     Search manual annotations (storageType 1)
     The body of the request is a JSON query passed to https://docs.mongodb.com/manual/reference/method/db.collection.find/
 
-    :return: JSON array of the annotations matching the query, sorted descending by score.
+    :return: JSON Array of results containing the annotation and score matching the query, sorted descending by score.
     """
     man = AnnotationManager()
 
@@ -787,9 +787,9 @@ def search_annotations():
         if query is None:
             return json.dumps({"error": "body with query is mandatory"}), 400
 
-        result = man.search_annotations(query)
+        results = man.search_annotations(query)
 
-        return jsonify(result)
+        return jsonify(results)
     except Exception as e:
         return _processCommonException(e)
     finally:

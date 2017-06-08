@@ -279,27 +279,29 @@ class AnnotationManager(StorageManager):
         return self.createAnnotationS(jsonBatch, strDocId, batchFormat,
                                       AnnotationManager.BATCH_STORAGE)
 
-    def search_annotations(self, query: str) -> list:
+    def search_annotations(self, query: str) -> dict:
         """
         Search manual annotations (storageType 1)
         The body of the request is a JSON query passed to MongoDb collection find method.
         https://docs.mongodb.com/manual/reference/method/db.collection.find/
 
         :param query: JSON query passed to MongoDb find
-        :return: Array of the annotations matching the query, sorted descending by score.
+        :return: Array of results containing the annotation and score matching the query, sorted descending by score.
         """
-        text_score = {"score:": {"$meta": "textScore"}}
+        text_score = {"score": {"$meta": "textScore"}}
         cursor = self.getMongoDocumentS(query, self.storageCollections[AnnotationManager.HUMAN_STORAGE],
                                         projection=text_score,
                                         sort=list(text_score.items()))
 
-        annotations = []
+        results = []
         for annotation in cursor:
             annotation["id"] = str(annotation['_id'])
             del annotation["_id"]
-            annotations.append(annotation)
+            score = annotation["score"]
+            del annotation["score"]
+            results.append({"score": score, "annotation": annotation})
 
-        return annotations
+        return results
 
     def getAnnotationS(self,
                        documentIds,
@@ -307,7 +309,7 @@ class AnnotationManager(StorageManager):
                        batchFormat=0,
                        storageType=0):
         """
-        Returns annotations respecting serach criterias
+        Returns annotations respecting search criteria
 
         :@param documentIds: List of documents containing the annotations.
 
