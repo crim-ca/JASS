@@ -14,6 +14,7 @@ services:
 
   mongo:
     build: mongo_image
+    image: vestaservices/mongo:latest
     expose:
       - 27017
       - 28017
