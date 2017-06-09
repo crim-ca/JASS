@@ -288,7 +288,8 @@ class AnnotationManager(StorageManager):
         :param query: JSON query passed to MongoDb find
         :return: Array of results containing the annotation and score matching the query, sorted descending by score.
         """
-        text_score = {"score": {"$meta": "textScore"}}
+        SCORE_FIELD_NAME = "%textScore"  # Use an unlikely annotation field name to avoid collision
+        text_score = {SCORE_FIELD_NAME: {"$meta": "textScore"}}
         cursor = self.getMongoDocumentS(query, self.storageCollections[AnnotationManager.HUMAN_STORAGE],
                                         projection=text_score,
                                         sort=list(text_score.items()))
@@ -297,8 +298,8 @@ class AnnotationManager(StorageManager):
         for annotation in cursor:
             annotation["id"] = str(annotation['_id'])
             del annotation["_id"]
-            score = annotation["score"]
-            del annotation["score"]
+            score = annotation[SCORE_FIELD_NAME]
+            del annotation[SCORE_FIELD_NAME]
             results.append({"score": score, "annotation": annotation})
 
         return results
