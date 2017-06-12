@@ -279,20 +279,25 @@ class AnnotationManager(StorageManager):
         return self.createAnnotationS(jsonBatch, strDocId, batchFormat,
                                       AnnotationManager.BATCH_STORAGE)
 
-    def search_annotations(self, query: str) -> dict:
+    def search_annotations(self, query: str, skip: int, limit: int) -> dict:
         """
         Search manual annotations (storageType 1)
         The body of the request is a JSON query passed to MongoDb collection find method.
         https://docs.mongodb.com/manual/reference/method/db.collection.find/
+        Skip & limit can be used to implement pagination of the results.
 
         :param query: JSON query passed to MongoDb find
+        :param skip: The number of result to skip.
+        :param limit: The maximum number of results to return
         :return: Array of results containing the annotation and score matching the query, sorted descending by score.
         """
         SCORE_FIELD_NAME = "%textScore"  # Use an unlikely annotation field name to avoid collision
         text_score = {SCORE_FIELD_NAME: {"$meta": "textScore"}}
         cursor = self.getMongoDocumentS(query, self.storageCollections[AnnotationManager.HUMAN_STORAGE],
                                         projection=text_score,
-                                        sort=list(text_score.items()))
+                                        sort=list(text_score.items()),
+                                        skip=skip,
+                                        limit=limit)
 
         results = []
         for annotation in cursor:

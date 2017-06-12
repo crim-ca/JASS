@@ -783,11 +783,13 @@ def search_annotations():
         man.addStorageCollection(AnnotationManager.HUMAN_STORAGE, hac)
         man.connect()
 
-        query = request.json
+        query = request.json.get('query')
         if query is None:
             return json.dumps({"error": "body with query is mandatory"}), 400
+        skip = request.json.get('skip')
+        limit = request.json.get('limit')
 
-        results = man.search_annotations(query)
+        results = man.search_annotations(query, skip=skip, limit=limit)
 
         return jsonify(results)
     except Exception as e:
