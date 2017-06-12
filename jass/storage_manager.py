@@ -12,6 +12,11 @@ from bson.errors import *
 # http://blog.mongolab.com/2014/01/how-big-is-your-mongodb/
 
 
+def clear_nones(a_dict: dict) -> dict:
+    cleaned = {key: value for key, value in a_dict.items() if a_dict[key] is not None}
+    return cleaned
+
+
 class StorageManager:
     """
     Storage manager class.
@@ -239,7 +244,9 @@ class StorageManager:
                 if kwargs is None:
                     res = coll.find(jsonQuery)
                 else:
-                    res = coll.find(jsonQuery, **kwargs)
+                    # Client might have called with None args. E.g. limit or skip
+                    cleaned_kwargs = clear_nones(kwargs)
+                    res = coll.find(jsonQuery, **cleaned_kwargs)
                 return res
             except StorageException as e:
                 raise e
