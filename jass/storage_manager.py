@@ -8,6 +8,7 @@ from jass.storage_exception import *
 from bson.objectid import ObjectId
 from bson.errors import *
 
+
 # MongoDB: some interesting performance statistics
 # http://blog.mongolab.com/2014/01/how-big-is-your-mongodb/
 
@@ -258,6 +259,53 @@ class StorageManager:
         else:
             raise StorageException(1)
 
+    @staticmethod
+    def grouped_annotation_filter(limit, skip):
+        project = {"$project": {"score": 1}}
+
+        if skip is not None:
+            slice_filter = ["$annotations", skip, limit]
+        elif limit is not None:
+            slice_filter = ["$annotations", limit]
+
+        if slice_filter is not None:
+            project["$project"]["annotations"] = {"$slice": slice_filter}
+
+        return project
+
+    def aggregate(self, pipeline: list, collection: str, **kwargs):
+        """
+        Aggregation pipeline.
+
+        Implementation detail: this will pass the allowDiskTrue to MongoDB.
+
+
+        :@param documentIds: List of document IDs for which we should search annotations.
+
+        :@param A queryToDetermine how to select annotations: see http://docs.mongodb.org/manual/reference/operator/query/ for options
+
+        :@return the number of deleted documents
+        """
+
+        if not collection:
+            collection = self.mongoCollection
+
+        if self.isConnected():
+            try:
+                db = self.client[self.mongoDb]
+                coll = db[collection]
+                res = coll.aggregate(pipeline, **kwargs)
+                return res
+            except StorageException as e:
+                raise e
+            except Exception as e:
+                logger.logUnknownError("Annotation Storage Aggregate",
+                                       "", e)
+                raise MongoDocumentException(0)
+
+        else:
+            raise StorageException(1)
+
     def deleteMongoDocumentS(self, jsonQuery, collection=None):
         """
         Delete multiple annotations.
@@ -270,7 +318,7 @@ class StorageManager:
         :@return The number of deleted documents
         """
 
-        if not (collection):
+        if not collection:
             collection = self.mongoCollection
 
         if self.isConnected():
@@ -278,7 +326,7 @@ class StorageManager:
                 db = self.client[self.mongoDb]
                 coll = db[collection]
                 res = coll.remove(jsonQuery)
-                if(res['ok'] != 1):
+                if (res['ok'] != 1):
                     raise StorageException(2)
                 else:
                     return res['n']
@@ -299,3 +347,4 @@ class StorageManager:
                 self.m_connected = False
             except:
                 self.m_connected = False
+
