@@ -262,13 +262,16 @@ class StorageManager:
     @staticmethod
     def grouped_annotation_filter(limit, skip):
         project = {"$project": {"score": 1}}
+        slice_filter = None
 
         if skip is not None:
             slice_filter = ["$annotations", skip, limit]
         elif limit is not None:
             slice_filter = ["$annotations", limit]
 
-        if slice_filter is not None:
+        if slice_filter is None:
+            project["$project"]["annotations"] = 1
+        else:
             project["$project"]["annotations"] = {"$slice": slice_filter}
 
         return project

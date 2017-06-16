@@ -317,7 +317,11 @@ class AnnotationManager(StorageManager):
                 db = self.client[self.mongoDb]
                 coll = db[self.storageCollections[AnnotationManager.HUMAN_STORAGE]]
                 res = coll.list_indexes()  # or index_information() ?
-                return res
+                for index in res:
+                    if "weights" in index:
+                        return index["weights"].keys()
+
+                return []
             except StorageException as e:
                 raise e
             except Exception as e:
@@ -364,7 +368,7 @@ class AnnotationManager(StorageManager):
                 annotation = result["annotation"]
                 annotation["id"] = str(annotation['_id'])
                 del annotation["_id"]
-            results.append(group)
+                results.append(group)
 
         return results
 

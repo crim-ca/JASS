@@ -829,7 +829,7 @@ def search_annotations_grouped():
         results = man.grouped_search_annotations(query, skip=skip, limit=limit)
         indexed_fields = man.get_text_index_fields()
 
-        return jsonify({"results": results, "indexedFields": "TODO"})
+        return jsonify({"results": results, "indexedFields": indexed_fields})
     except Exception as e:
         return _processCommonException(e)
     finally:
