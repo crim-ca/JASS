@@ -797,6 +797,45 @@ def search_annotations():
     finally:
         man.disconnect()
 
+
+@APP.route('/annotations/grouped-search', methods=['POST'])
+def search_annotations_grouped():
+    """
+    Search manual annotations (storageType 1) and group them by timeline.
+    The body of the request is a JSON query passed to
+    https://docs.mongodb.com/manual/reference/method/db.collection.aggregate/
+
+    Limit is mandatory when skip is specified.
+
+    :return: The text index fields and an array of annotation matches grouped by timeline (annotationSetId).
+     Each match contains the annotation and score matching the query, sorted descending by score.
+     Groups are also sorted descending by score.
+    """
+    man = AnnotationManager()
+
+    try:
+        hac = settings.GetConfigValue("ServiceStockageAnnotations", "HumanAnnotationCollection")
+        man.addStorageCollection(AnnotationManager.HUMAN_STORAGE, hac)
+        man.connect()
+
+        query = request.get_json(force=True).get('query')
+        if query is None:
+            return json.dumps({"error": "body with query is mandatory."}), 400
+        skip = request.json.get('skip')
+        limit = request.json.get('limit')
+        if limit is None and skip is not None:
+            return json.dumps({"error": "Limit is mandatory when skip is specified."}), 400
+
+        results = man.grouped_search_annotations(query, skip=skip, limit=limit)
+        indexed_fields = man.get_text_index_fields()
+
+        return jsonify({"results": results, "indexedFields": indexed_fields})
+    except Exception as e:
+        return _processCommonException(e)
+    finally:
+        man.disconnect()
+
+
 # TODO Update
 @APP.route('/document/<document_id>/annotation', methods=['POST'])
 def createDocumentAnnotation(document_id):

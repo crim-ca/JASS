@@ -53,6 +53,9 @@ class AnnotationManager(StorageManager):
     """
     COMPACT_BATCH_FORMAT = 1
 
+    # Use an unlikely annotation field name to avoid collision
+    SCORE_FIELD_NAME = "%textScore"
+
     def addStorageCollection(self, storageType, collectionName):
         """
         Since we may have different collections depending on the type of
@@ -291,8 +294,7 @@ class AnnotationManager(StorageManager):
         :param limit: The maximum number of results to return
         :return: Array of results containing the annotation and score matching the query, sorted descending by score.
         """
-        SCORE_FIELD_NAME = "%textScore"  # Use an unlikely annotation field name to avoid collision
-        text_score = {SCORE_FIELD_NAME: {"$meta": "textScore"}}
+        text_score = {self.SCORE_FIELD_NAME: {"$meta": "textScore"}}
         cursor = self.getMongoDocumentS(query, self.storageCollections[AnnotationManager.HUMAN_STORAGE],
                                         projection=text_score,
                                         sort=list(text_score.items()),
@@ -303,9 +305,70 @@ class AnnotationManager(StorageManager):
         for annotation in cursor:
             annotation["id"] = str(annotation['_id'])
             del annotation["_id"]
-            score = annotation[SCORE_FIELD_NAME]
-            del annotation[SCORE_FIELD_NAME]
+            score = annotation[self.SCORE_FIELD_NAME]
+            del annotation[self.SCORE_FIELD_NAME]
             results.append({"score": score, "annotation": annotation})
+
+        return results
+
+    def get_text_index_fields(self) -> list:
+        if self.isConnected():
+            try:
+                db = self.client[self.mongoDb]
+                coll = db[self.storageCollections[AnnotationManager.HUMAN_STORAGE]]
+                res = coll.list_indexes()  # or index_information() ?
+                for index in res:
+                    if "weights" in index:
+                        return index["weights"].keys()
+
+                return []
+            except StorageException as e:
+                raise e
+            except Exception as e:
+                logger.logUnknownError("Annotation Storage Aggregate",
+                                       "", e)
+                raise MongoDocumentException(0)
+
+        else:
+            raise StorageException(1)
+
+    def grouped_search_annotations(self, query: str, skip: int, limit: int) -> dict:
+        """
+        Search manual annotations(storageType 1) and group them by timeline.
+        The body of the request is a JSON query passed to MongoDb collection aggregate method.
+        https://docs.mongodb.com/manual/reference/method/db.collection.aggregate/
+        Skip & limit apply to the annotation list of each group.
+
+        :param query: JSON query passed to MongoDb $match (Should be a $text search
+        :param skip: The number of result to skip.
+        :param limit: The maximum number of results to return
+        :return: Array of annotation matches grouped by timeline (annotationSetId).
+        Each match contains the annotation and score matching the query, sorted descending by score.
+        Groups are also sorted descending by score.
+        """
+        annotation_filter = self.grouped_annotation_filter(limit, skip)
+        pipeline = [
+            {"$match": query},
+            {"$project": {"score": {"$meta": "textScore"}, "annotationSetId": "$annotationSetId", "annotation": "$$ROOT",
+                          "_id": 0}},
+            {"$sort": {"score": -1}},  # Annotations descending order of score
+            {"$group": {"_id": "$annotationSetId", "score": {"$sum": "$score"},
+                        "annotations": {"$push": "$$ROOT"}}},
+            annotation_filter,
+            {"$sort": {"score": -1}},  # Groups descending order of score
+        ]
+
+        cursor = self.aggregate(pipeline,
+                                self.storageCollections[AnnotationManager.HUMAN_STORAGE],
+                                allowDiskUse=True)
+
+        results = []
+        for group in cursor:
+            for result in group["annotations"]:
+                annotation = result["annotation"]
+                annotation["id"] = str(annotation['_id'])
+                del annotation["_id"]
+                results.append(group)
 
         return results
 
