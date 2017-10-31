@@ -15,7 +15,7 @@ After cloning the repository, go to the project root and execute
 
 .. code-block:: bash
 
-    docker-compose up -d
+	docker-compose up -d
 
 This command will create JASS and MongoDB containers and run them in background.
 The first time this command is run, it will build MongoDB and JASS containers. Once the build is finished (the shell will resume), it will take approximately 30 seconds for JASS to initialize MongoDB.
@@ -24,7 +24,7 @@ In order to stop execution of both containers, go to project root and execute:
 
 .. code-block:: bash
 
-    docker-compose stop
+	docker-compose stop
 
 ************************************
 Running physical JASS installation:
@@ -38,27 +38,27 @@ Developers:
 For people who want to modify JASS.
  1. Start a dev/test instance of MongoDB. Data will be saved inside the instance.
 
-    .. code-block:: bash
+	.. code-block:: bash
 
         # From project root
-        cd mongo-dev
-        docker-compose up -d
+		cd mongo-dev
+		docker-compose up -d
 
 
  2. Execute database initialisation script. This need to be run only once for test and dev environements.
 
-    .. code-block:: bash
+	.. code-block:: bash
 
         # From project root
-        # Export dev configuration path and run initialization script
-        python create_db_if_not_exist.py "configs/dev/config.ini"
-        python create_db_if_not_exist.py "configs/dev/config.ini"
-        docker-compose up
-        # Use docker-compose stop to stop mongo containers
+		# Export dev configuration path and run initialization script
+		python create_db_if_not_exist.py "configs/dev/config.ini"
+		python create_db_if_not_exist.py "configs/dev/config.ini"
+		docker-compose up
+		# Use docker-compose stop to stop mongo containers
 
  3. Run JASS.
 
-    .. code-block:: bash
+	.. code-block:: bash
 
         python -m jass.simple_rest
 
@@ -113,7 +113,7 @@ ANNOTATIONS
 
 :Large Annotation Storage: Made for large amounts of annotations which are mostly used for preprocessing. These annotations can be accessed by batches. It is possible to create/search/remove batches of annotations. When creating a batch of annotations, fields common to all annotations can be used to search for the batch.
 
-See documentation for more info.
+    See documentation for more info.
 
 :Note: Annotations manipulations can be done for annotations of one particular document at a time. This restriction was made for security and scalability issues.
 
@@ -125,7 +125,7 @@ Human Annotation Storage
 
 .. code-block:: bash
 
-		curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d '{"@context":"test", "a":"15"}' http://127.0.0.1:5000/document/<document_id>/annotation
+        curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d '{"@context":"test", "a":"15"}' http://127.0.0.1:5000/document/<document_id>/annotation
 
 **Creating multiple annotations**
 :Note: Information in the "common" information will be replicated to all annotations.
@@ -165,7 +165,7 @@ Human Annotation Storage
 Large Annotation Storage
 ------------------------
 
-**Creating one batch** contatining multiple annotations
+**Creating one batch** containing multiple annotations
 
 .. code-block:: bash
 
@@ -194,3 +194,129 @@ Large Annotation Storage
 .. code-block:: bash
 
 	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22d%22%3A1%7D
+
+------------------------
+Global Annotation Search
+------------------------
+When having to search for manual annotations across all documents or some documents, there is a global search endpoint.
+
+To support pagination needs, there are optional skip and limit fields to respectively skip a number of search results and limit the number of search results.
+
+If a text search is used (see below), the results are returned in descending order of relevance score.
+
+This example skips no results and limits to 2 results returned.
+
+.. code-block:: bash
+
+	curl --request POST \
+	  --url http://127.0.0.1:5000/annotations/search \
+	  --header 'content-type: application/json' \
+	  --data '{
+		"query": {
+			"annotationTypeId": "transcription"
+		},
+		"skip": 0,
+		"limit": 2
+	}'
+
+--------------------------------
+Global Grouped Annotation Search
+--------------------------------
+Search manual annotations (storageType 1) and group them by timeline.
+
+Returns the text index fields and an array of annotation matches grouped by timeline (annotationSetId).
+
+Each match contains the annotation and score matching the query, sorted descending by score.
+
+Groups are also sorted descending by score. Group scores are the sum of its match scores.
+
+Group searched must contain a $text query.
+
+*Efficiency consideration*
+
+AFAIK MongoDB isn't really as efficient on aggregate operations as a standard relational database would be. Same goes for sorting on the score. As such, we can expect searches with a large number of results to be slow.
+
+Searches known to match a significant proportion of a large number of annotations should be avoided. E.G searching for *male* or *female* knowing one of the text index field will contain only one or the other. These kind of specialized, domain specific queries would be better served with a normal, non-text search, on a single document.
+
+Grouped search have the same API as the global search:
+
+.. code-block:: bash
+
+	curl --request POST \
+	  --url http://ss-vl-vesta04.crim.ca:9880/annotations/grouped-search \
+	  --header 'content-type: application/json' \
+	  --data '{
+		"query": {
+			"$text": {
+				"$search": "java coffee shop"
+			},
+			"doc_id": {
+				"$in": [
+					"584f1836d2b2b60082a71576",
+					"555f30591747d5574b3900af",
+					"556884621747d5574b3cd591"
+				]
+			}
+		},
+		"skip": 0,
+		"limit": 5
+	}'
+
+----------------------
+Annotation Text Search
+----------------------
+Whether using *jsonSelect* on a single document or doing a global *query* across documents, it is possible to do a text search.
+For details, see MongoDB Documentation https://docs.mongodb.com/manual/text-search/
+
+Note: the JASS has been configured for the text search need of the VESTA platform. As such, the text index is comprised of the following fields:
+- text
+- motionName
+- shotName
+- speakerId
+- speakerSubtype
+
+Text search will only search those fields for the given search expression.
+
+A small example using global search
+
+.. code-block:: bash
+
+	curl --request POST \
+	  --url http://127.0.0.1:5000/annotations/search \
+	  --header 'content-type: application/json' \
+	  --data '{
+		"query": {
+			"$text": {
+				"$search": "java coffee shop"
+			}
+		},
+		"skip": 0,
+		"limit": 2
+	}'
+
+
+Note: by default, rules for indexing and searching text is done using English. A different language can be specified while storing an annotation and when searching. For best results, the same language should be used when indexing and searching.
+
+Storing a annotation with French fields:
+
+.. code-block:: bash
+
+	curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d \
+	    '{"text": "cheval", "language": "french"}' http://127.0.0.1:5000/document/<document_id>/annotation
+
+
+Searching annotations with French fields:
+
+.. code-block:: bash
+
+	curl --request POST \
+	  --url http://127.0.0.1:5000/annotations/search \
+	  --header 'content-type: application/json' \
+	  --data '{
+		"query": {
+			"$text": {
+				"$search": "chevaux",
+				"$language": "french"
+			}
+		}
+	}'
