@@ -19,7 +19,7 @@ Licenses used
 #############
 
 :BSD: http://en.wikipedia.org/wiki/BSD_licenses
-:Python Software Foundation License: http://opensource.org/licenses/Python-2.0
+:Python Software Foundation License: https://docs.python.org/3/license.html
 :Apache v2: http://www.apache.org/licenses/LICENSE-2.0.html
 :MIT: http://opensource.org/licenses/MIT
 

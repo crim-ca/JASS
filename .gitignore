@@ -61,3 +61,5 @@ target/
 
 # 2to3
 *.bak
+.DS_Store
+docs/.DS_Store
