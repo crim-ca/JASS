@@ -1,4 +1,3 @@
-============================================
 NEP-143-1 Annotation Storage Service
 ============================================
 
@@ -6,9 +5,9 @@ The purpose of this JSON Annotation Storage Service (JASS) is to offer a
 REST API to store and manipulate large amounts of JSON annotations. Annotation are stored in a
 MongoDB backend.
 
----------------------
+============================================
 Overview
----------------------
+============================================
 
 There are 3 elements which are stored in the annotation storage:
 

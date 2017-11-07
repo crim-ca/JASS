@@ -1,7 +1,7 @@
 Authors
 =======
 
-This package was developped by the Centre de Recherche Informatique de Montréal (CRIM). 
+This package was developed by the Centre de Recherche Informatique de Montréal (CRIM).
 
 Support
 -------
