@@ -342,9 +342,8 @@ class AnnotationManager(StorageManager):
         :param query: JSON query passed to MongoDb $match (Should be a $text search
         :param skip: The number of result to skip.
         :param limit: The maximum number of results to return
-        :return: Array of annotation matches grouped by timeline (annotationSetId).
-        Each match contains the annotation and score matching the query, sorted descending by score.
-        Groups are also sorted descending by score.
+
+        :return: Array of annotation matches grouped by timeline (annotationSetId). Each match contains the annotation and score matching the query, sorted descending by score. Groups are also sorted descending by score.
         """
         annotation_filter = self.grouped_annotation_filter(limit, skip)
         pipeline = [

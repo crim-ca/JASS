@@ -80,7 +80,7 @@ release = __version__
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['setup*','create_db_if_not_exist*','builddoc*']
+exclude_patterns = ['setup*', 'create_db_if_not_exist*']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -130,7 +130,7 @@ html_theme = 'nature'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = '_static/logo_crim_FR.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
