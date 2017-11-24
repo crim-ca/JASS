@@ -1,3 +1,5 @@
+.. _jass_home:
+
 Usage
 =====
 
@@ -74,6 +76,9 @@ BASIC API USAGE
 ---------
 DOCUMENTS
 ---------
+
+.. _create_document:
+
 *************************
 Creating a basic document
 *************************
