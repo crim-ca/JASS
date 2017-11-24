@@ -17,7 +17,7 @@ After cloning the repository, go to the project root and execute
 
 .. code-block:: bash
 
-	docker-compose up -d
+    docker-compose up -d
 
 This command will create JASS and MongoDB containers and run them in background.
 The first time this command is run, it will build MongoDB and JASS containers. Once the build is finished (the shell will resume), it will take approximately 30 seconds for JASS to initialize MongoDB.
@@ -26,7 +26,7 @@ In order to stop execution of both containers, go to project root and execute:
 
 .. code-block:: bash
 
-	docker-compose stop
+    docker-compose stop
 
 ************************************
 Running physical JASS installation:
@@ -40,27 +40,27 @@ Developers:
 For people who want to modify JASS.
  1. Start a dev/test instance of MongoDB. Data will be saved inside the instance.
 
-	.. code-block:: bash
+    .. code-block:: bash
 
         # From project root
-		cd mongo-dev
-		docker-compose up -d
+        cd mongo-dev
+        docker-compose up -d
 
 
  2. Execute database initialisation script. This need to be run only once for test and dev environements.
 
-	.. code-block:: bash
+    .. code-block:: bash
 
         # From project root
-		# Export dev configuration path and run initialization script
-		python create_db_if_not_exist.py "configs/dev/config.ini"
-		python create_db_if_not_exist.py "configs/dev/config.ini"
-		docker-compose up
-		# Use docker-compose stop to stop mongo containers
+        # Export dev configuration path and run initialization script
+        python create_db_if_not_exist.py "configs/dev/config.ini"
+        python create_db_if_not_exist.py "configs/dev/config.ini"
+        docker-compose up
+        # Use docker-compose stop to stop mongo containers
 
  3. Run JASS.
 
-	.. code-block:: bash
+    .. code-block:: bash
 
         python -m jass.simple_rest
 
@@ -85,7 +85,7 @@ Creating a basic document
 
 .. code-block:: bash
 
-	curl -X POST -H "Content-Type: application/json" -d '{"@context":"test","a":"a","b":"b"}' http://127.0.0.1:5000/document
+    curl -X POST -H "Content-Type: application/json" -d '{"@context":"test","a":"a","b":"b"}' http://127.0.0.1:5000/document
 
 | This will return a document id
 | Ex:  **53fe308de1382336346f05f7**
@@ -96,7 +96,7 @@ Get the document created earlier
 ********************************
 .. code-block:: bash
 
-	curl -v http://127.0.0.1:5000/document/<document_id>
+    curl -v http://127.0.0.1:5000/document/<document_id>
 
 ***************************
 Update the document content
@@ -106,7 +106,7 @@ Update the document content
 
 .. code-block:: bash
 
-	curl -v -X PUT -H "Content-Type: application/json" -d '{"id":"<document_id>", "@context":"test","a":"a","c":"c"}' http://127.0.0.1:5000/document/<document_id>
+    curl -v -X PUT -H "Content-Type: application/json" -d '{"id":"<document_id>", "@context":"test","a":"a","c":"c"}' http://127.0.0.1:5000/document/<document_id>
 
 ===========
 ANNOTATIONS
@@ -137,33 +137,33 @@ Human Annotation Storage
 
 .. code-block:: bash
 
-	curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d '{"common":{"@context":"test"},"data":[{"a":1},{"b":"1"},{"a":1,"c":2}]}' http://127.0.0.1:5000/document/<document_id>/annotations
+    curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d '{"common":{"@context":"test"},"data":[{"a":1},{"b":"1"},{"a":1,"c":2}]}' http://127.0.0.1:5000/document/<document_id>/annotations
 
 **Get all annotations** of the document, which contain field a equal to 1.
 :Note: to do so we add an optional search parameter **jsonSelect** and specify {"a" : 1}. The syntax from search is the same as for mongo db: http://docs.mongodb.org/manual/reference/method/db.collection.find/. By default get is not restricted to the storage (ie it will return annotations which satify the criteria from bot human and batch storages). Use parameter storageType=1 parameter to restrict search to only human annotation storage
 
 .. code-block:: bash
 
-	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22a%22%3A1%7D&storageType=1
+    curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22a%22%3A1%7D&storageType=1
 
 **Verify** that 4 annotations exists for this document
 
 .. code-block:: bash
 
-	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations
+    curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations
 
 
 **Delete all annotations** with value c equal to 2
 
 .. code-block:: bash
 
-	curl -v -X DELETE -H "Content-Type: application/json" -H "Accept:application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22c%22%3A2%7D
+    curl -v -X DELETE -H "Content-Type: application/json" -H "Accept:application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22c%22%3A2%7D
 
 **Verify** that all annotations with value c equal to 2 are deleted.
 
 .. code-block:: bash
 
-	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations
+    curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations
 
 
 ------------------------
@@ -174,31 +174,31 @@ Large Annotation Storage
 
 .. code-block:: bash
 
-	curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d '{"common":{"@context":"test"},"data":[{"d":1},{"d":1},{"d":1,"a":1}]}' http://127.0.0.1:5000/document/<document_id>/annotations?storageType=2
+    curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d '{"common":{"@context":"test"},"data":[{"d":1},{"d":1},{"d":1,"a":1}]}' http://127.0.0.1:5000/document/<document_id>/annotations?storageType=2
 
 **Get all annotations** for the document.
 
 .. code-block:: bash
 
-	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations
+    curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations
 
 **Get all annotations** only annotations from large storage
 
 .. code-block:: bash
 
-	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?storageType=2
+    curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?storageType=2
 
 **Searching all annotations** with value a equals to 1. It is possible to see, that even if large storage contains, annotations with value, a = 1 ({"d":1,"a":1}), they can not be searched directly, a = 1 is not a common field of all annotations in the batch.
 
 .. code-block:: bash
 
-	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22a%22%3A1%7D
+    curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22a%22%3A1%7D
 
 **Searching all annotations** with value d equals to 1. It is possible to see that batch annotations are found.
 
 .. code-block:: bash
 
-	curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22d%22%3A1%7D
+    curl -v -H "Accept: application/json" http://127.0.0.1:5000/document/<document_id>/annotations?jsonSelect=%7B%22d%22%3A1%7D
 
 ------------------------
 Global Annotation Search
@@ -213,16 +213,16 @@ This example skips no results and limits to 2 results returned.
 
 .. code-block:: bash
 
-	curl --request POST \
-	  --url http://127.0.0.1:5000/annotations/search \
-	  --header 'content-type: application/json' \
-	  --data '{
-		"query": {
-			"annotationTypeId": "transcription"
-		},
-		"skip": 0,
-		"limit": 2
-	}'
+    curl --request POST \
+      --url http://127.0.0.1:5000/annotations/search \
+      --header 'content-type: application/json' \
+      --data '{
+        "query": {
+            "annotationTypeId": "transcription"
+        },
+        "skip": 0,
+        "limit": 2
+    }'
 
 --------------------------------
 Global Grouped Annotation Search
@@ -247,25 +247,25 @@ Grouped search have the same API as the global search:
 
 .. code-block:: bash
 
-	curl --request POST \
-	  --url http://ss-vl-vesta04.crim.ca:9880/annotations/grouped-search \
-	  --header 'content-type: application/json' \
-	  --data '{
-		"query": {
-			"$text": {
-				"$search": "java coffee shop"
-			},
-			"doc_id": {
-				"$in": [
-					"584f1836d2b2b60082a71576",
-					"555f30591747d5574b3900af",
-					"556884621747d5574b3cd591"
-				]
-			}
-		},
-		"skip": 0,
-		"limit": 5
-	}'
+    curl --request POST \
+      --url http://ss-vl-vesta04.crim.ca:9880/annotations/grouped-search \
+      --header 'content-type: application/json' \
+      --data '{
+        "query": {
+            "$text": {
+                "$search": "java coffee shop"
+            },
+            "doc_id": {
+                "$in": [
+                    "584f1836d2b2b60082a71576",
+                    "555f30591747d5574b3900af",
+                    "556884621747d5574b3cd591"
+                ]
+            }
+        },
+        "skip": 0,
+        "limit": 5
+    }'
 
 ----------------------
 Annotation Text Search
@@ -286,18 +286,18 @@ A small example using global search
 
 .. code-block:: bash
 
-	curl --request POST \
-	  --url http://127.0.0.1:5000/annotations/search \
-	  --header 'content-type: application/json' \
-	  --data '{
-		"query": {
-			"$text": {
-				"$search": "java coffee shop"
-			}
-		},
-		"skip": 0,
-		"limit": 2
-	}'
+    curl --request POST \
+      --url http://127.0.0.1:5000/annotations/search \
+      --header 'content-type: application/json' \
+      --data '{
+        "query": {
+            "$text": {
+                "$search": "java coffee shop"
+            }
+        },
+        "skip": 0,
+        "limit": 2
+    }'
 
 
 Note: by default, rules for indexing and searching text is done using English. A different language can be specified while storing an annotation and when searching. For best results, the same language should be used when indexing and searching.
@@ -306,22 +306,22 @@ Storing a annotation with French fields:
 
 .. code-block:: bash
 
-	curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d \
-	    '{"text": "cheval", "language": "french"}' http://127.0.0.1:5000/document/<document_id>/annotation
+    curl -v -H "Content-Type: application/json" -H "Accept: application/json" -d \
+        '{"text": "cheval", "language": "french"}' http://127.0.0.1:5000/document/<document_id>/annotation
 
 
 Searching annotations with French fields:
 
 .. code-block:: bash
 
-	curl --request POST \
-	  --url http://127.0.0.1:5000/annotations/search \
-	  --header 'content-type: application/json' \
-	  --data '{
-		"query": {
-			"$text": {
-				"$search": "chevaux",
-				"$language": "french"
-			}
-		}
-	}'
+    curl --request POST \
+      --url http://127.0.0.1:5000/annotations/search \
+      --header 'content-type: application/json' \
+      --data '{
+        "query": {
+            "$text": {
+                "$search": "chevaux",
+                "$language": "french"
+            }
+        }
+    }'

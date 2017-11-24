@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to JASS's documentation
-===============================
+JSON Annotation Storage System Documentation
+============================================
 .. include:: ../README.rst
 
 .. toctree::
@@ -14,8 +14,10 @@ Welcome to JASS's documentation
    license
    install
    usage
+   authors
+   release_notes
+   provenance
    jass
-
 
 Indices and tables
 ==================

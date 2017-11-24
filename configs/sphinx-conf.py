@@ -75,7 +75,7 @@ release = '0.1.1'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['setup*','create_db_if_not_exist*','builddoc*']
+exclude_patterns = ['setup*', 'create_db_if_not_exist*']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
