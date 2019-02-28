@@ -20,3 +20,9 @@ Release notes
 * Global annotation search
 * Grouped Global annotation search
 * Text Search
+
+1.1.11
+--------------------
+* Removed syslog from default config
+* Upped flask version
+* Changed setup.py to automatically use requirements.txt
