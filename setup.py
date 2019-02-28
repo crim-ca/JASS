@@ -19,8 +19,10 @@ with open('RELEASE_NOTES.rst') as history_file:
 
 from __meta__ import __version__, __author__, __contact__
 
-with open('requirements.txt') as f:
-    REQUIREMENTS = f.read().splitlines()
+REQUIREMENTS = ['Flask==1.0.2',
+		'pymongo==3.4.0',
+                'mock==2.0.0',
+		'pytz==2017.2']
 
 setup(
     # -- Meta information --------------------------------------------------
