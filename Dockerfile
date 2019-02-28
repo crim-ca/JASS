@@ -7,7 +7,7 @@ RUN apk add --update bash && rm -rf /var/cache/apk/*
 RUN pip3 install gunicorn
 
 ENV JASS_CONFIG_PATH "/opt/jass_deploy/config.ini"
-ENV JASS_VERSION 1.1.10
+ENV JASS_VERSION 1.1.11
 
 RUN mkdir -p /opt/jass_deploy
 
